@@ -4,5 +4,4 @@ public class User {
     private String first_name;
     private String email_address;
     //just a little try
-    String name = "yanglei";
 }
