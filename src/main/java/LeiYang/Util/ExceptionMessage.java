@@ -1,4 +1,4 @@
-package LeiYang.Utils;
+package LeiYang.Util;
 
 public class ExceptionMessage<T> {
     private int code;
@@ -8,6 +8,11 @@ public class ExceptionMessage<T> {
         this.code = code;
         this.message = message;
     }
+
+    public ExceptionMessage() {
+
+    }
+
     public int getCode() {
         return code;
     }
@@ -19,5 +24,10 @@ public class ExceptionMessage<T> {
     }
     public void setMessage(String message) {
         this.message = message;
+    }
+    public ExceptionMessage success()
+    {
+        ExceptionMessage result = new ExceptionMessage(200,"good");
+        return result;
     }
 }
