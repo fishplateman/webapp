@@ -29,7 +29,7 @@ public class UserController {
         }
         else{
             String password = Bycrypt.encryptPassword(psw);
-            System.out.println(password);
+            //System.out.println(password);
             User user = new User(fname,lname,email,password);
             userService.save(user);
             return new ExceptionMessage().success();
@@ -37,7 +37,8 @@ public class UserController {
     }
     @PutMapping("/v1/user/{id}")
     public ExceptionMessage update(@RequestBody UserVo user,@PathVariable Long id){
-        userService.update(user.getFirstName(), user.getLastName(), user.getPassword(), id);
+        String password = Bycrypt.encryptPassword(user.getPassword());
+        userService.update(user.getFirstName(), user.getLastName(), password, id);
         return new ExceptionMessage().success();
     }
 
