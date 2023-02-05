@@ -9,8 +9,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
-
 
 @Repository
 public interface UserDao extends JpaRepository<User,Long> {
@@ -24,8 +22,6 @@ public interface UserDao extends JpaRepository<User,Long> {
     @Transactional
     @Query(value = "UPDATE user SET first_name = ?1 , last_name = ?2  , password = ?3 WHERE id = ?4", nativeQuery = true)
     int update(String fname, String lname, String password, long id);
-
-    //UPDATE user SET first_name = ?1 , last_name = ?2  , email_address = ?3 WHERE id = ?4;
 
 
 }
