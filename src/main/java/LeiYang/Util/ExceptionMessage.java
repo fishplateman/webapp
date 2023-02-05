@@ -27,7 +27,12 @@ public class ExceptionMessage<T> {
     }
     public ExceptionMessage success()
     {
-        ExceptionMessage result = new ExceptionMessage(200,"good");
+        ExceptionMessage result = new ExceptionMessage(200,"OK");
+        return result;
+    }
+    public ExceptionMessage fail()
+    {
+        ExceptionMessage result = new ExceptionMessage(400,"bad");
         return result;
     }
 }
