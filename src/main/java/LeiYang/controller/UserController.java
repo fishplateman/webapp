@@ -1,10 +1,12 @@
 package LeiYang.controller;
 
+import LeiYang.Util.Bycrypt;
 import LeiYang.Util.ExceptionMessage;
 import LeiYang.entity.User;
 import LeiYang.entity.UserVo;
 import LeiYang.service.UserService;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -26,7 +28,9 @@ public class UserController {
             return new ExceptionMessage().fail();
         }
         else{
-            User user = new User(fname,lname,email,psw);
+            String password = Bycrypt.encryptPassword(psw);
+            System.out.println(password);
+            User user = new User(fname,lname,email,password);
             userService.save(user);
             return new ExceptionMessage().success();
         }
