@@ -3,3 +3,7 @@ spring:
     username: root
     password: aabcd
     url: jdbc:mysql://localhost:3306/CSYE6225?autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
+
+  jpa:
+    hibernate:
+      ddl-auto: update
