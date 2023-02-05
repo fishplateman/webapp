@@ -58,28 +58,28 @@ public class User {
     private String firstName;
     @Column(name = "email_address")
     private String emailAddress;
-//    @CreatedDate
-//    @Column(name = "account_created")
-//    private Timestamp createdTime;
-//    @LastModifiedDate
-//    @Column(name = "account_updated")
-//    private Timestamp updateTime;
-//
-//    public Timestamp getCreatedTime() {
-//        return createdTime;
-//    }
-//
-//    public void setCreatedTime(Timestamp getGmtCreate) {
-//        this.createdTime = getCreatedTime();
-//    }
-//
-//    public Timestamp getUpdateTime() {
-//        return updateTime;
-//    }
-//
-//    public void setUpdateTime(Timestamp updateGmtCreate) {
-//        this.updateTime = updateGmtCreate;
-//    }
+    @CreatedDate
+    @Column(name = "account_created")
+    private Date createdTime;
+    @LastModifiedDate
+    @Column(name = "account_updated")
+    private Date updateTime;
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Timestamp getGmtCreate) {
+        this.createdTime = getCreatedTime();
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Timestamp updateGmtCreate) {
+        this.updateTime = updateGmtCreate;
+    }
 
 
 
