@@ -13,11 +13,12 @@ on:
     branches:
       - 'main'
       - 'fishplateman/**'
-
+      - 'AlatusKitty/**'
   push:
     branches:
     - 'main'
     - 'fishplateman/**'
+    - 'AlatusKitty/**'
 
 jobs:
 
