@@ -1,12 +1,11 @@
 package LeiYang.controller;
 
-import LeiYang.Util.Bycrypt;
-import LeiYang.Util.ExceptionMessage;
+import LeiYang.util.Bycrypt;
+import LeiYang.util.ExceptionMessage;
 import LeiYang.entity.User;
 import LeiYang.entity.UserVo;
 import LeiYang.service.UserService;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -23,14 +22,16 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/v1/user")
-    public ExceptionMessage add(@RequestParam("fname") String fname,@RequestParam("lname") String lname,@RequestParam("psw") String psw,@RequestParam("email") String email){
-        if(userService.find(email) != null){
+    //public ExceptionMessage add(@RequestParam("fname") String fname,@RequestParam("lname") String lname,@RequestParam("psw") String psw,@RequestParam("email") String email){
+    public ExceptionMessage add(@RequestBody UserVo userVo){
+
+        if(userService.find(userVo.getEmail()) != null){
             return new ExceptionMessage().fail();
         }
         else{
-            String password = Bycrypt.encryptPassword(psw);
+            String password = Bycrypt.encryptPassword(userVo.getPassword());
             //System.out.println(password);
-            User user = new User(fname,lname,email,password);
+            User user = new User(userVo.getFirstName(), userVo.getLastName(), userVo.getEmail(),password);
             userService.save(user);
             return new ExceptionMessage().success();
         }
@@ -47,6 +48,5 @@ public class UserController {
         User user = userService.get(id);
         return user;
     }
-
 
 }

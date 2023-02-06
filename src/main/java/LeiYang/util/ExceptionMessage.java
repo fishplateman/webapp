@@ -1,4 +1,4 @@
-package LeiYang.Util;
+package LeiYang.util;
 
 public class ExceptionMessage<T> {
     private int code;

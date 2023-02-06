@@ -1,4 +1,4 @@
-package LeiYang.Util;
+package LeiYang.util;
 
 
 import javax.servlet.http.HttpServletResponse;

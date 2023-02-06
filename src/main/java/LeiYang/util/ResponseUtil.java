@@ -1,4 +1,4 @@
-package LeiYang.Util;
+package LeiYang.util;
 
 import java.util.HashMap;
 import java.util.Map;
