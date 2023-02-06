@@ -12,6 +12,7 @@ on:
   push:
     branches: [ "main","assignment01" ]
   pull_request:
+    types: [opened, reopened]
     branches: [ "main" ]
 
 jobs:
