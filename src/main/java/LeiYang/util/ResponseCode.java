@@ -1,4 +1,4 @@
-package LeiYang.Util;
+package LeiYang.util;
 
 public enum ResponseCode {
     OK(0,"成功"),
