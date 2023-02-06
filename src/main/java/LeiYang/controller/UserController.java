@@ -1,6 +1,7 @@
 package LeiYang.controller;
 
 import LeiYang.util.Bycrypt;
+import LeiYang.util.EmailVerify;
 import LeiYang.util.ExceptionMessage;
 import LeiYang.entity.User;
 import LeiYang.entity.UserVo;
@@ -22,19 +23,20 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/v1/user")
-    //public ExceptionMessage add(@RequestParam("fname") String fname,@RequestParam("lname") String lname,@RequestParam("psw") String psw,@RequestParam("email") String email){
     public ExceptionMessage add(@RequestBody UserVo userVo){
-
-        if(userService.find(userVo.getEmail()) != null){
-            return new ExceptionMessage().fail();
+        if(EmailVerify.isValidEmail(userVo.getEmail())){
+            if(userService.find(userVo.getEmail()) != null){
+                return new ExceptionMessage().fail();
+            }
+            else{
+                String password = Bycrypt.encryptPassword(userVo.getPassword());
+                //System.out.println(password);
+                User user = new User(userVo.getFirstName(), userVo.getLastName(), userVo.getEmail(),password);
+                userService.save(user);
+                return new ExceptionMessage().success();
+            }
         }
-        else{
-            String password = Bycrypt.encryptPassword(userVo.getPassword());
-            //System.out.println(password);
-            User user = new User(userVo.getFirstName(), userVo.getLastName(), userVo.getEmail(),password);
-            userService.save(user);
-            return new ExceptionMessage().success();
-        }
+        return new ExceptionMessage().fail();
     }
     @PutMapping("/v1/user/{id}")
     public ExceptionMessage update(@RequestBody UserVo user,@PathVariable Long id){

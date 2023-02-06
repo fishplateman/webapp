@@ -1,2 +1,4 @@
+
+@Test
 public class UserTest {
 }
