@@ -10,12 +10,13 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "main","fishplateman/assignment01" ]
+    branches: [ "main","fishplateman/assignment01","fishplateman/assignment02" ]
   pull_request:
     types: [opened, reopened]
-    branches: [ "main","fishplateman/assignment01" ]
+    branches: [ "main","fishplateman/assignment01","fishplateman/assignment02" ]
 
 jobs:
+
   build:
 
     runs-on: ubuntu-latest
