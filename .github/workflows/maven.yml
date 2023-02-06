@@ -10,10 +10,10 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "main","assignment01" ]
+    branches: [ "main","fishplateman/assignment01" ]
   pull_request:
     types: [opened, reopened]
-    branches: [ "main" ]
+    branches: [ "main","fishplateman/assignment01" ]
 
 jobs:
   build:
