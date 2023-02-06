@@ -9,12 +9,11 @@
 name: Java CI with Maven
 
 on:
-  push:
-    branches:
-    - 'main'
-    - 'fishplateman/**'
-
   pull_request:
+    branches:
+      - 'main'
+      - 'fishplateman/**'
+  push:
     branches:
     - 'main'
     - 'fishplateman/**'
