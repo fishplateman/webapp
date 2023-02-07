@@ -1,4 +1,0 @@
-
-@Test
-public class UserTest {
-}

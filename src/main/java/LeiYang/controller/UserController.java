@@ -1,9 +1,9 @@
 package LeiYang.controller;
 
+import LeiYang.entity.Users;
 import LeiYang.util.Bycrypt;
 import LeiYang.util.EmailVerify;
 import LeiYang.util.ExceptionMessage;
-import LeiYang.entity.User;
 import LeiYang.entity.UserVo;
 import LeiYang.service.UserService;
 
@@ -31,8 +31,8 @@ public class UserController {
             else{
                 String password = Bycrypt.encryptPassword(userVo.getPassword());
                 //System.out.println(password);
-                User user = new User(userVo.getFirstName(), userVo.getLastName(), userVo.getEmail(),password);
-                userService.save(user);
+                Users users = new Users(userVo.getFirstName(), userVo.getLastName(), userVo.getEmail(),password);
+                userService.save(users);
                 return new ExceptionMessage().success();
             }
         }
@@ -46,9 +46,9 @@ public class UserController {
     }
 
     @GetMapping("/v1/user/{id}")
-    public User getUser(@PathVariable Long id){
-        User user = userService.get(id);
-        return user;
+    public Users getUser(@PathVariable Long id){
+        Users users = userService.get(id);
+        return users;
     }
 
 }
