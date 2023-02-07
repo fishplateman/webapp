@@ -1,7 +1,7 @@
 package LeiYang.service;
 
 import LeiYang.dao.UserDao;
-import LeiYang.entity.User;
+import LeiYang.entity.Users;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -11,26 +11,26 @@ public class UserService {
     @Resource
     private UserDao userDao;
 
-    public void save(User user){
-        userDao.save(user);
+    public void save(Users users){
+        userDao.save(users);
     }
 
 
-    public User getById(long id){
+    public Users getById(long id){
         return userDao.getById(id);
     }
 
     public void update(String fname, String lname, String psw, long id) {
         userDao.update(fname, lname, psw, id);
     }
-    public User find(String email){
-        User user = userDao.findByName(email);
-        return user;
+    public Users find(String email){
+        Users users = userDao.findByName(email);
+        return users;
     }
 
 
-    public User get(Long id){
-        User result = userDao.findOne(id);
+    public Users get(Long id){
+        Users result = userDao.findOne(id);
         return result;
     }
 }

@@ -29,16 +29,16 @@ import java.util.Date;
 @Table(name = "user")
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class User {
-    public User() {
+public class Users {
+    public Users() {
     }
 
-    public User(String fname, String lname, String psw) {
+    public Users(String fname, String lname, String psw) {
         this.password = psw;
         this.firstName = fname;
         this.lastName = lname;
     }
-    public User(String fname, String lname, String email, String psw) {
+    public Users(String fname, String lname, String email, String psw) {
         this.password = psw;
         this.emailAddress = email;
         this.firstName = fname;
