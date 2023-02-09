@@ -31,6 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    //permitAll URL
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
