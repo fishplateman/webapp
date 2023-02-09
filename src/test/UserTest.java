@@ -16,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import LeiYang.util.ExceptionMessage;
 
 
+
 @RunWith(JUnit4.class)
 @SpringBootTest
 public class UserTest {
