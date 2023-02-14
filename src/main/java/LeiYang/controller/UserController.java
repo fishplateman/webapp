@@ -24,7 +24,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/v1/user")
-    public ExceptionMessage add(@RequestBody UserVo userVo){
+    public Product add(@RequestBody UserVo userVo){
         if(EmailVerify.isValidEmail(userVo.getEmail())){
             if(userService.find(userVo.getEmail()) != null){
                 return new ExceptionMessage().fail();
