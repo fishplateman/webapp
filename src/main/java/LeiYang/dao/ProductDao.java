@@ -18,4 +18,9 @@ public interface ProductDao extends JpaRepository<Product,Long> {
     @Query(value = "UPDATE product SET name = ?1 , description = ?2 , sku = ?3 , manufacturer = ?4 , quantity = ?5 WHERE id = ?6", nativeQuery = true)
     int update(String name, String description, String sku, String manufacturer, int quantity, long id);
 
+    @Query(value = "SELECT *FROM product where id = ?1", nativeQuery = true)
+    Product findById(long id);
+
+    @Query(value = "select * from product order by date_last_updated desc limit 0,1", nativeQuery = true)
+    Product findTheLastOne();
 }
