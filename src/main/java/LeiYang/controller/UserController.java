@@ -1,6 +1,7 @@
 package LeiYang.controller;
 
 import LeiYang.entity.Users;
+import LeiYang.service.MyUserDetailsService;
 import LeiYang.util.Bycrypt;
 import LeiYang.util.EmailVerify;
 import LeiYang.util.ExceptionMessage;
@@ -38,6 +39,8 @@ public class UserController {
         }
         return new ExceptionMessage().fail();
     }
+
+    //添加认证是否为本人
     @PutMapping("/v1/user/{id}")
     public ExceptionMessage update(@RequestBody UserVo user,@PathVariable Long id){
         String password = Bycrypt.encryptPassword(user.getPassword());

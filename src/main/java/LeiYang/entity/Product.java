@@ -1,5 +1,6 @@
 package LeiYang.entity;
 
+import org.hibernate.validator.constraints.Range;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -42,6 +43,7 @@ public class Product {
     private String manufacturer;
 
     @Column(name = "quantity")
+    @Range(max=100, min=0)
     private int quantity;
 
     @CreatedDate
