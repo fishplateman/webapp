@@ -1,10 +1,10 @@
 {
     "builders": [{
       "type": "amazon-ebs",
-      "region": "us-east-1",
-      "access_key": "AKIA3X234LSSUHCO5N3I",
-      "secret_key": "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",
-      "source_ami": "ami-01d0541c326f4ace7",
+      "access_key": "{{user `aws_access_key`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "region": "{{user `aws_region`}}",
+      "source_ami": "ami-07bc4074d2dcaaa28",
       "instance_type": "t2.micro",
       "ssh_username": "ec2-user",
       "ami_name": "packer-example-{{timestamp}}"
@@ -20,4 +20,5 @@
     }]
   }
 
-  
+
+
