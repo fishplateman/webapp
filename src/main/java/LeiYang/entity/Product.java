@@ -36,7 +36,7 @@ public class Product {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "sku")
+    @Column(name = "sku", unique = true)
     private String sku;
 
     @Column(name = "manufacturer")
