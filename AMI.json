@@ -1,0 +1,24 @@
+{
+    "builders": [{
+      "type": "amazon-ebs",
+      "access_key": "{{user `aws_access_key`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "region": "{{user `aws_region`}}",
+      "source_ami": "ami-07bc4074d2dcaaa28",
+      "instance_type": "t2.micro",
+      "ssh_username": "ec2-user",
+      "ami_name": "packer-example-{{timestamp}}"
+    }],
+    "provisioners": [{
+      "type": "shell",
+      "inline": [
+        "yum update -y",
+        "yum install -y mysql-server",
+        "service mysqld start",
+        "chkconfig mysqld on"
+      ]
+    }]
+  }
+
+
+
