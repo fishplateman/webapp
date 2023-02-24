@@ -3,6 +3,7 @@ package LeiYang.service;
 import LeiYang.dao.ProductDao;
 import LeiYang.entity.Product;
 import LeiYang.entity.Users;
+import LeiYang.util.ExceptionMessage;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -16,6 +17,9 @@ public class ProductService {
         productDao.save(product);
     }
 
+    public Product findTheLastOne(){
+        return productDao.findTheLastOne();
+    }
     public Product find(String sku){
         Product product = productDao.findBySku(sku);
         return product;
@@ -25,8 +29,12 @@ public class ProductService {
         productDao.update(name, description, sku, manufacturer, quantity, id);
     }
 
-    public void delete(Long id){
-        productDao.delete(id);
+    public ExceptionMessage delete(Long id){
+        if(productDao.findById(id) != null){
+            productDao.delete(id);
+            return new ExceptionMessage().success();
+        }
+        return new ExceptionMessage().noResource();
 
     }
 

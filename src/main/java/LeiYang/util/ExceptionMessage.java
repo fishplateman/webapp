@@ -35,4 +35,9 @@ public class ExceptionMessage<T> {
         ExceptionMessage result = new ExceptionMessage(400,"bad");
         return result;
     }
+    public ExceptionMessage noResource()
+    {
+        ExceptionMessage result = new ExceptionMessage(404,"no resource");
+        return result;
+    }
 }
