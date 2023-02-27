@@ -4,19 +4,17 @@
       "access_key": "{{user `aws_access_key`}}",
       "secret_key": "{{user `aws_secret_key`}}",
       "region": "{{user `aws_region`}}",
+      "ami_users": ["057553252157","057553252157"],
       "source_ami": "ami-07bc4074d2dcaaa28",
       "instance_type": "t2.micro",
       "ssh_username": "ec2-user",
-      "ami_name": "packer-example-{{timestamp}}"
+      "ami_name": "packer-example-{{timestamp}}",
+      "vpc_id": "vpc-0040ed4dd50f1d291",
+      "subnet_id": "subnet-067b3427afb8ad919"
     }],
     "provisioners": [{
       "type": "shell",
-      "inline": [
-        "yum update -y",
-        "yum install -y mysql-server",
-        "service mysqld start",
-        "chkconfig mysqld on"
-      ]
+      "script": "script/script.sh"
     }]
   }
 
