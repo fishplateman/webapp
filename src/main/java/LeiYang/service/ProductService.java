@@ -42,4 +42,9 @@ public class ProductService {
         Product product = productDao.findOne(id);
         return product;
     }
+
+    public long findOwnerId(Long productId){
+        Long id = productDao.findOwnerId(productId);
+        return id;
+    }
 }

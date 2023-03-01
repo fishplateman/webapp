@@ -3,22 +3,35 @@ package LeiYang.controller;
 import LeiYang.entity.Product;
 import LeiYang.entity.ProductVo;
 import LeiYang.service.ProductService;
+import LeiYang.service.UserService;
 import LeiYang.util.ExceptionMessage;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.security.Principal;
 
 @RestController
 public class ProductController {
     @Resource
     private ProductService productService;
+    @Resource
+    private UserService userService;
     @PostMapping("/v1/product")
     public Object add(@RequestBody ProductVo productVo){
         if(productService.find(productVo.getSku()) != null){
             return new ExceptionMessage().fail();
         }
         else{
-            Product product = new Product(productVo.getName(), productVo.getDescription(), productVo.getSku(),productVo.getManufacturer(),productVo.getQuantity(), 1L);
+            SecurityContext context = SecurityContextHolder.getContext();
+            Authentication authentication = context.getAuthentication();
+            Object principal = authentication.getPrincipal();
+            String userName = ((UserDetails) principal).getUsername();
+            long id = userService.getId(userName);
+            Product product = new Product(productVo.getName(), productVo.getDescription(), productVo.getSku(),productVo.getManufacturer(),productVo.getQuantity(), id);
             productService.save(product);
             return productService.findTheLastOne();
         }

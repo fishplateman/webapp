@@ -14,18 +14,6 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 
-//CREATE TABLE `CSYE6225`.`user` (
-//        `id` BIGINT  PRIMARY KEY NOT NULL AUTO_INCREMENT,
-//        `account_created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-//        `account_updated` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-//        `email_address` VARCHAR(100) NOT NULL,
-//        `password` VARCHAR(25) NOT NULL,
-//        `first_name` VARCHAR(20) NOT NULL,
-//        `last_name` VARCHAR(20) NOT NULL
-//        );
-
-
-
 @Table(name = "user")
 @Entity
 @EntityListeners(AuditingEntityListener.class)

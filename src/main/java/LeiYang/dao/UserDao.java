@@ -17,6 +17,9 @@ public interface UserDao extends JpaRepository<Users,Long> {
     @Query(value = "SELECT *FROM user where id = ?1", nativeQuery = true)
     Users getById(long id);
 
+    @Query(value = "SELECT id FROM user where email_address = ?1", nativeQuery = true)
+    long getId(String userName);
+
     @Modifying
     @Transactional
     @Query(value = "UPDATE user SET first_name = ?1 , last_name = ?2  , password = ?3 WHERE id = ?4", nativeQuery = true)

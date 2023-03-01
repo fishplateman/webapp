@@ -29,8 +29,13 @@ public class UserService {
     }
 
 
-    public Users get(Long id){
+    public Users get(long id){
         Users result = userDao.findOne(id);
         return result;
+    }
+
+    public long getId(String userName){
+        long id = userDao.getId(userName);
+        return id;
     }
 }

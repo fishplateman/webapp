@@ -1,22 +1,38 @@
 {
-    "builders": [{
-      "type": "amazon-ebs",
-      "access_key": "{{user `aws_access_key`}}",
-      "secret_key": "{{user `aws_secret_key`}}",
-      "region": "{{user `aws_region`}}",
-      "ami_users": ["057553252157","057553252157"],
-      "source_ami": "ami-07bc4074d2dcaaa28",
-      "instance_type": "t2.micro",
-      "ssh_username": "ec2-user",
-      "ami_name": "packer-example-{{timestamp}}",
-      "vpc_id": "vpc-0040ed4dd50f1d291",
-      "subnet_id": "subnet-067b3427afb8ad919"
-    }],
-    "provisioners": [{
+  "variables": {
+    "aws_profile": "",
+    "github_token":""
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "region": "us-east-1",
+    "ami_users": ["057553252157"],
+    "source_ami": "ami-0dfcb1ef8550277af",
+    "instance_type": "t2.micro",
+    "ssh_username": "ec2-user",
+    "ami_name": "packer-example-{{timestamp}}",
+    "vpc_id": "vpc-0040ed4dd50f1d291",
+    "subnet_id": "subnet-067b3427afb8ad919"
+  }],
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "target/demo-1.0-SNAPSHOT.jar",
+      "destination": "/tmp/demo-1.0-SNAPSHOT.jar"
+    },
+    {
+      "type": "file",
+      "source": "configure/application.yml",
+      "destination": "/tmp/application.yml"
+    },
+    {
       "type": "shell",
-      "script": "script/script.sh"
-    }]
-  }
+      "script": "scripts/script.sh"
+    }
+  ]
+}
 
 
 

@@ -23,4 +23,7 @@ public interface ProductDao extends JpaRepository<Product,Long> {
 
     @Query(value = "select * from product order by date_last_updated desc limit 0,1", nativeQuery = true)
     Product findTheLastOne();
+
+    @Query(value = "select owner_user_id from product where id = ?1", nativeQuery = true)
+    Long findOwnerId(long id);
 }

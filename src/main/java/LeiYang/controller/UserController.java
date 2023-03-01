@@ -8,9 +8,14 @@ import LeiYang.util.ExceptionMessage;
 import LeiYang.entity.UserVo;
 import LeiYang.service.UserService;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.security.Principal;
 
 @RestController
 public class UserController {
@@ -40,9 +45,17 @@ public class UserController {
         return new ExceptionMessage().fail();
     }
 
-    //添加认证是否为本人
     @PutMapping("/v1/user/{id}")
     public ExceptionMessage update(@RequestBody UserVo user,@PathVariable Long id){
+        //添加认证是否为本人
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = context.getAuthentication();
+        Object principal = authentication.getPrincipal();
+        String userName = ((UserDetails) principal).getUsername();
+        if(!userName.equals(userService.get(id).getEmail_address()))
+        {
+            return new ExceptionMessage().fail();
+        }
         String password = Bycrypt.encryptPassword(user.getPassword());
         userService.update(user.getFirstName(), user.getLastName(), password, id);
         return new ExceptionMessage().success();
