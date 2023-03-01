@@ -84,7 +84,7 @@ public class ImageController {
         // Delete temporary file
         tempFile.delete();
         // Generate URL for uploaded file
-        String fileUrl = s3client.getUrl(bucketName, productId + "/" + fileName).toString();
+        String fileUrl = s3client.getUrl(bucketName, productId + "/" + fileName).toExternalForm();
         // store the image information in RDS
         Image image = new Image(productId,fileName,fileUrl);
         imageDao.save(image);

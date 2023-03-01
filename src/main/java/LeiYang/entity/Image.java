@@ -21,10 +21,10 @@ public class Image {
     @Id
     @Column(name = "image_id", nullable = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Long image_id;
+    private long image_id;
 
     @Column(name = "product_id", nullable = false)
-    private Long productId;
+    private long productId;
 
     @Column(name = "file_name", nullable = false)
     private String fileName;
@@ -37,19 +37,19 @@ public class Image {
     private Date dateAdded;
 
 
-    public Long getId() {
+    public long getId() {
         return image_id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.image_id = id;
     }
 
-    public Long getProductId() {
+    public long getProductId() {
         return productId;
     }
 
-    public void setProductId(Long productId) {
+    public void setProductId(long productId) {
         this.productId = productId;
     }
 

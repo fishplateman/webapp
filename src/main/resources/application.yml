@@ -2,8 +2,13 @@ spring:
   datasource:
     username: root
     password: aabcd
-    url: jdbc:mysql://localhost:3306/CSYE6225?autoReconnect=true&useSSL=false&createDatabaseIfNotExist=true
+    url: jdbc:mysql://localhost:3306/csye6225?autoReconnect=true&useSSL=false&createDatabaseIfNotExist=true
+
 
   jpa:
     hibernate:
       ddl-auto: update
+
+aws:
+  s3:
+    bucket-name: my-bucket-default-qhomolig
