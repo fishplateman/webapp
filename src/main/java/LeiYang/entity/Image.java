@@ -36,6 +36,14 @@ public class Image {
     @Column(name = "date_added")
     private Date dateAdded;
 
+    public void setS3_bucket_path(String s3_bucket_path) {
+        this.s3_bucket_path = s3_bucket_path;
+    }
+
+    public String getS3_bucket_path() {
+        return s3_bucket_path;
+    }
+
 
     public long getId() {
         return image_id;

@@ -418,3 +418,12 @@ resource "aws_iam_instance_profile" "profile" {
   name = "profile"
   role = aws_iam_role.ec2_role.name
 }
+
+#创建route53 record
+resource "aws_route53_record" "aws_a_record"{
+  zone_id=data.aws_availability_zones.available.names[0]
+  name="dev.leiyang.me"
+  type = "A"
+  ttl = "60"
+  records = [aws_instance.example.public_ip]
+}
