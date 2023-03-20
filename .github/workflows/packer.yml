@@ -3,7 +3,7 @@ name: Packer Build
 on:
   pull_request:
     types:
-      - opened
+      - closed
 jobs:
   package-project:
     runs-on: ubuntu-latest
