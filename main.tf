@@ -11,7 +11,7 @@ variable "profile" {
 variable "ami" {
   type        = string
   description = "The ami id to use for building instances"
-  default     = "ami-0e1e4ffe37bc876d1"
+  default     = "ami-0cb5a00fa4fdd9c2c"
 }
 
 variable "zone_id" {
@@ -228,31 +228,6 @@ resource "aws_volume_attachment" "example" {
   instance_id = aws_instance.example_ec2[count.index].id
 }
 
-# 创建三个弹性IP
-resource "aws_eip" "public_ips" {
-  count = 3
-  vpc   = true
-  tags = {
-    Name = "public-ip-${count.index}"
-  }
-}
-
-# 把创建的弹性IP与instances关联
-resource "aws_eip_association" "public_ip_assoc" {
-  count         = 3
-  allocation_id = aws_eip.public_ips[count.index].id
-
-  # Remove existing association for this Elastic IP
-  provisioner "local-exec" {
-    command = <<-EOT
-      sleep 5
-      aws ec2 disassociate-address --public-ip ${aws_eip.public_ips[count.index].public_ip} --region ${var.region}
-    EOT
-  }
-
-  instance_id = aws_instance.example_ec2[count.index].id
-}
-
 # database 安全组
 resource "aws_security_group" "database_sg" {
   name_prefix = "database-sg-"
@@ -439,5 +414,8 @@ resource "aws_route53_record" "a_record" {
   name    = "demo.kittyman.me"
   type    = "A"
   ttl     = "60"
-  records = [aws_eip.public_ips[0].public_ip, aws_eip.public_ips[1].public_ip, aws_eip.public_ips[2].public_ip]
+  records = [aws_instance.example_ec2[0].public_ip, aws_instance.example_ec2[1].public_ip, aws_instance.example_ec2[2].public_ip]
+  depends_on = [
+    aws_instance.example_ec2
+  ]
 }

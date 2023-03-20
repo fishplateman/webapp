@@ -84,7 +84,7 @@ public class ImageController {
         // Delete temporary file
         tempFile.delete();
         // Generate URL for uploaded file
-        String fileUrl = s3client.getUrl(bucketName, productId + "/" + fileName).toExternalForm();
+        String fileUrl = s3client.getUrl(bucketName, productId + "/" + fileName).toString();
         // store the image information in RDS
         Image image = new Image(productId,fileName,fileUrl);
         imageDao.save(image);
@@ -116,8 +116,8 @@ public class ImageController {
             return new ExceptionMessage().fail();
         }
         //delete the file from S3 bucket
-        String filePath = imageDao.finds3_bucket_path(imageId);
-        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucketName, filePath);
+        String fileName = imageDao.findsFileName(imageId);
+        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucketName, productId + "/" + fileName);
         s3client.deleteObject(deleteObjectRequest);
         // delete the file from database
         imageDao.delete(imageId);
