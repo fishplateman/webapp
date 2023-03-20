@@ -6,16 +6,18 @@ variable "region" {
 variable "profile" {
   type        = string
   description = "The AWS profile to use for authentication"
-  default     = "prod"
+  default     = "demo"
 }
 variable "ami" {
   type        = string
   description = "The ami id to use for building instances"
-  default     = "ami-076ecead14c730c7e"
+  default     = "ami-067935f7506e72b0f"
 }
 
 variable "zone_id" {
   type = string
+  description = "The zone id to use for building Route53"
+  default     = "Z05840372REQB8AHW5V22"
 }
 
 resource "random_string" "bucket_name" {
@@ -432,10 +434,10 @@ resource "aws_iam_instance_profile" "profile" {
 }
 
 #创建route53 record
-resource "aws_route53_record" "aws_a_record" {
+resource "aws_route53_record" "a_record" {
   zone_id = var.zone_id
-  name    = "kittyman.me"
+  name    = "demo.kittyman.me"
   type    = "A"
   ttl     = "60"
-  records = [aws_eip.public_ips[0].id]
+  records = [aws_instance.example_ec2[0].public_ip]
 }
