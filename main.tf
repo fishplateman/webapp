@@ -6,7 +6,7 @@ variable "region" {
 variable "profile" {
   type        = string
   description = "The AWS profile to use for authentication"
-  default     = "demo"
+  default     = "prod"
 }
 variable "ami" {
   type        = string
@@ -434,7 +434,7 @@ resource "aws_iam_instance_profile" "profile" {
 #创建route53 record
 resource "aws_route53_record" "aws_a_record" {
   zone_id = var.zone_id
-  name    = "demo.kittyman.me"
+  name    = "kittyman.me"
   type    = "A"
   ttl     = "60"
   records = [aws_eip.public_ips[0].id]
