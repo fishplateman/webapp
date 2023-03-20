@@ -15,6 +15,6 @@ public interface ImageDao extends JpaRepository<Image,Long> {
     @Query(value = "SELECT *FROM image where image_id = ?1 AND product_id = ?2", nativeQuery = true)
     Image findByDoubleId(long image_id, long product_id);
 
-    @Query(value = "select s3_bucket_path from image where image_id = ?1", nativeQuery = true)
-    String finds3_bucket_path(long image_id);
+    @Query(value = "select file_name from image where image_id = ?1", nativeQuery = true)
+    String findsFileName(long image_id);
 }
