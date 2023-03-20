@@ -1,11 +1,9 @@
-name: Packer Build
+name: Java CI with Maven
 
 on:
-  pull_request:
-    types:
-      - opened
+  pull_request
 jobs:
-  package-project:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository-
@@ -18,17 +16,11 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # Checkout Repo
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: Run Unit Tests
+        run: mvn test
 
-      # Setup AWS Credential
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
-      # Build AMI
-      - name: Run packer
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: packer build -var aws_access_key=$AWS_ACCESS_KEY_ID -var aws_secret_key=$AWS_SECRET_ACCESS_KEY AMI.json
+      - name: Validate AMI Script
+        run: packer validate AMI.json
