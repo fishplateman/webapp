@@ -24,7 +24,7 @@
     },
     {
       "type": "file",
-      "source": "src/main/java/resources/application.yml",
+      "source": "src/main/resources/application.yml",
       "destination": "/tmp/application.yml"
     },
     {
