@@ -12,7 +12,3 @@ spring:
 aws:
   s3:
     bucket-name: my-bucket-default-qhomolig
-
-aws:
-  s3:
-    bucket-name: my-bucket-default-qhomolig
