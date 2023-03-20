@@ -11,7 +11,11 @@ variable "profile" {
 variable "ami" {
   type        = string
   description = "The ami id to use for building instances"
-  default     = "ami-0555fb873f696dcaa"
+  default     = "ami-076ecead14c730c7e"
+}
+
+variable "zone_id" {
+  type = string
 }
 
 resource "random_string" "bucket_name" {
@@ -128,7 +132,7 @@ resource "aws_route" "public_igw_route" {
 }
 
 
-# 创建webapp安全组，22,80,443开放TCP请求接收，发出请求无限制  
+# 创建webapp安全组，22,80,443开放TCP请求接收，发出请求无限制
 resource "aws_security_group" "webapp_sg" {
   name_prefix = "webapp-sg-"
   vpc_id      = aws_vpc.mainvpc.id
@@ -190,7 +194,7 @@ resource "aws_instance" "example_ec2" {
   sed -i "s|password:.*|password: ${aws_db_instance.db.password}|g" /tmp/application.yml
   sed -i "s|url:.*|url: jdbc:mysql://${aws_db_instance.db.endpoint}/csye6225?autoReconnect=true\&useSSL=false\&createDatabaseIfNotExist=true|g" /tmp/application.yml
   sed -i "s|bucket-name:.*|bucket-name: ${aws_s3_bucket.bucket.bucket}|g" /tmp/application.yml
- 
+
   # Start the webapp
   cd /tmp
   java -jar /tmp/demo-1.0-SNAPSHOT.jar -Dspring.config.location=/tmp/application.yml
@@ -352,6 +356,14 @@ resource "aws_s3_bucket_acl" "bucket" {
   acl    = "private"
 }
 
+# resource "aws_s3_bucket_public_access_block" "bucket" {
+#   bucket = aws_s3_bucket.bucket.id
+#   block_public_acls       = true
+#   block_public_policy     = true
+#   ignore_public_acls      = true
+#   restrict_public_buckets = true
+# }
+
 
 
 # 创建IAM policy
@@ -420,10 +432,10 @@ resource "aws_iam_instance_profile" "profile" {
 }
 
 #创建route53 record
-resource "aws_route53_record" "aws_a_record"{
-  zone_id=data.aws_availability_zones.available.names[0]
-  name="dev.leiyang.me"
-  type = "A"
-  ttl = "60"
-  records = [aws_instance.example.public_ip]
+resource "aws_route53_record" "aws_a_record" {
+  zone_id = var.zone_id
+  name    = "demo.kittyman.me"
+  type    = "A"
+  ttl     = "60"
+  records = [aws_eip.public_ips[0].id]
 }
