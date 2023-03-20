@@ -11,7 +11,7 @@ variable "profile" {
 variable "ami" {
   type        = string
   description = "The ami id to use for building instances"
-  default     = "ami-067935f7506e72b0f"
+  default     = "ami-0e1e4ffe37bc876d1"
 }
 
 variable "zone_id" {
@@ -439,5 +439,5 @@ resource "aws_route53_record" "a_record" {
   name    = "demo.kittyman.me"
   type    = "A"
   ttl     = "60"
-  records = [aws_instance.example_ec2[0].public_ip]
+  records = [aws_eip.public_ips[0].public_ip, aws_eip.public_ips[1].public_ip, aws_eip.public_ips[2].public_ip]
 }
