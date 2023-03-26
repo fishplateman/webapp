@@ -11,24 +11,28 @@ public class CloudWatchService {
     private AmazonCloudWatch cloudWatch;
 
     public void sendCustomMetric(String name, double requestCount, double responseTime) {
-        Dimension dimension = new Dimension()
-                .withName("CSYE6225")
-                .withValue("webapp");
+        Dimension countDimension = new Dimension()
+                .withName("count")
+                .withValue("count");
+
+        Dimension timerDimension = new Dimension()
+                .withName("timer")
+                .withValue("timer");
 
         MetricDatum requestCountDatum = new MetricDatum()
                 .withMetricName(name+"-count")
                 .withUnit(StandardUnit.Count.toString())
                 .withValue(requestCount)
-                .withDimensions(dimension);
+                .withDimensions(countDimension);
 
         MetricDatum responseTimeDatum = new MetricDatum()
                 .withMetricName(name+"-timer")
                 .withUnit(StandardUnit.Milliseconds.toString())
                 .withValue(responseTime)
-                .withDimensions(dimension);
+                .withDimensions(timerDimension);
 
         PutMetricDataRequest request = new PutMetricDataRequest()
-                .withNamespace("webapp")
+                .withNamespace("CSYE6225")
                 .withMetricData(requestCountDatum, responseTimeDatum);
 
         PutMetricDataResult response = cloudWatch.putMetricData(request);
