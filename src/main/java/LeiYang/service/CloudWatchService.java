@@ -12,7 +12,7 @@ public class CloudWatchService {
 
     public void sendCustomMetric(String name, double requestCount, double responseTime) {
         Dimension dimension = new Dimension()
-                .withName("webapp")
+                .withName("CSYE6225")
                 .withValue("webapp");
 
         MetricDatum requestCountDatum = new MetricDatum()
