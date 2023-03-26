@@ -50,7 +50,7 @@ public class ProductVo {
         this.manufacturer = manufacturer;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 

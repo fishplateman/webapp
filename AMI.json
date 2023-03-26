@@ -1,8 +1,4 @@
 {
-  "variables": {
-    "aws_profile": "",
-    "github_token":""
-  },
   "builders": [{
     "type": "amazon-ebs",
     "access_key": "{{user `aws_access_key`}}",
@@ -21,6 +17,11 @@
       "type": "file",
       "source": "target/demo-1.0-SNAPSHOT.jar",
       "destination": "/tmp/demo-1.0-SNAPSHOT.jar"
+    },
+    {
+      "type": "file",
+      "source": "cloudwatch-config.json",
+      "destination": "/tmp/cloudwatch-config.json"
     },
     {
       "type": "file",
