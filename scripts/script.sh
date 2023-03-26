@@ -28,6 +28,9 @@ WantedBy=multi-user.target
 sudo systemctl daemon-reload
 sudo systemctl enable webapp
 
+sudo mkdir -p /var/log
+sudo chmod -R 777 /var/log
+
 cd /
 sudo yum install -y amazon-cloudwatch-agent
 sudo chmod 777 /opt

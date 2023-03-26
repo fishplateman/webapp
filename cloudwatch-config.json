@@ -4,13 +4,17 @@
     "logfile": "/var/logs/amazon-cloudwatch-agent.log"
   },
   "metrics": {
-    "namespace": "webapp",
+    "namespace": "CSYE6225",
     "metrics_collected": {
       "CSYE6225": {
         "dimensions": [
           {
-            "Name": "webapp",
-            "Value": "webapp"
+            "Name": "Reqcount",
+            "Value": "count"
+          },
+          {
+            "Name": "Reqtimer",
+            "Value": "timer"
           }
         ],
         "statsd":{

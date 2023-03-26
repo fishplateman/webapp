@@ -12,11 +12,11 @@ public class CloudWatchService {
 
     public void sendCustomMetric(String name, double requestCount, double responseTime) {
         Dimension countDimension = new Dimension()
-                .withName("count")
+                .withName("Reqcount")
                 .withValue("count");
 
         Dimension timerDimension = new Dimension()
-                .withName("timer")
+                .withName("Reqtimer")
                 .withValue("timer");
 
         MetricDatum requestCountDatum = new MetricDatum()
