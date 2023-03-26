@@ -28,15 +28,15 @@ WantedBy=multi-user.target
 sudo systemctl daemon-reload
 sudo systemctl enable webapp
 
-sudo mkdir -p /var/log
-sudo chmod -R 777 /var/log
+sudo chmod 777 /var/logs
 
 cd /
 sudo yum install -y amazon-cloudwatch-agent
+cloudwatch_agent_installed=$(systemctl list-unit-files | grep amazon-cloudwatch-agent.service | wc -l)
 sudo chmod 777 /opt
 sudo mv /tmp/cloudwatch-config.json /opt/cloudwatch-config.json
 sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/cloudwatch-config.json -s
 sudo chmod 777 /lib/systemd/system/
-sudo sed -i 's/^ExecStart=.*/ExecStart=sudo \/opt\/aws\/amazon-cloudwatch-agent\/bin\/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:\/opt\/cloudwatch-config.json -s/g' /lib/systemd/system/amazon-cloudwatch-agent.service
+sudo sed -i 's/^ExecStart=.*/ExecStart=sudo \/opt\/aws\/amazon-cloudwatch-agent\/bin\/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:\/opt\/cloudwatch-config.json -s/g' /etc/systemd/system/amazon-cloudwatch-agent.service
 
 sudo systemctl enable amazon-cloudwatch-agent
