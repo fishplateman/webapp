@@ -12,3 +12,5 @@ spring:
 aws:
   s3:
     bucket-name: my-bucket-default-qhomolig
+  region: us-east-1
+

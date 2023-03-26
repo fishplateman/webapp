@@ -11,11 +11,13 @@ import java.util.UUID;
 import LeiYang.entity.Image;
 import LeiYang.dao.ImageDao;
 import LeiYang.entity.Product;
+import LeiYang.service.CloudWatchService;
 import LeiYang.service.ProductService;
 import LeiYang.service.UserService;
 import LeiYang.util.ExceptionMessage;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,11 +44,17 @@ public class ImageController {
     @Resource
     private UserService userService;
 
+    @Autowired
+    private CloudWatchService cloudWatchService;
+
     @Resource
     ProductService productService;
 
     @Value("${aws.s3.bucket-name}")
     private String bucketName;
+
+    @Value("${aws.region}")
+    private String awsRegion;
 
     private AmazonS3 s3client;
 
@@ -55,13 +63,14 @@ public class ImageController {
     public ImageController() {
         this.s3client = AmazonS3ClientBuilder.standard()
                 .withCredentials(new InstanceProfileCredentialsProvider(false))
-                .withRegion(Regions.US_EAST_1)
+                .withRegion(awsRegion)
                 .build();
     }
 
     @PostMapping(value = "/product/{product_id}/image")
     public Object uploadProductImage(@PathVariable("product_id") Long productId,
                                      @RequestParam("file") MultipartFile file) throws IOException {
+        long startTime = System.currentTimeMillis();
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
         Object principal = authentication.getPrincipal();
@@ -88,25 +97,34 @@ public class ImageController {
         // store the image information in RDS
         Image image = new Image(productId,fileName,fileUrl);
         imageDao.save(image);
+        long responseTime = System.currentTimeMillis() - startTime;
+        cloudWatchService.sendCustomMetric("ImageUploaded", 1, responseTime);
         return ResponseEntity.status(HttpStatus.OK).body(image);
     }
 
     @GetMapping(value = "/product/{product_id}/image")
     public ResponseEntity<List> getProductImageList(@PathVariable("product_id") Long productId) throws IOException {
+        long startTime = System.currentTimeMillis();
         if (productService.findById(productId) == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Arrays.asList("404, No such product"));
+        long responseTime = System.currentTimeMillis() - startTime;
+        cloudWatchService.sendCustomMetric("GetProductImageList", 1, responseTime);
         return ResponseEntity.status(HttpStatus.OK).body(imageDao.findByProductId(productId));
     }
 
     @GetMapping(value = "/product/{product_id}/image/{image_id}")
     public Object getProductImage(@PathVariable("product_id") Long productId,
                                   @PathVariable("image_id") Long imageId) throws IOException {
+        long startTime = System.currentTimeMillis();
         if (productService.findById(productId) == null) return new ExceptionMessage().fail();
+        long responseTime = System.currentTimeMillis() - startTime;
+        cloudWatchService.sendCustomMetric("GetProductImage", 1, responseTime);
         return  ResponseEntity.status(HttpStatus.OK).body(imageDao.findByDoubleId(imageId,productId));
     }
 
     @DeleteMapping(value = "/product/{product_id}/image/{image_id}")
     public ExceptionMessage getProductImageList(@PathVariable("product_id") Long productId,
                                                 @PathVariable("image_id") Long imageId) throws IOException {
+        long startTime = System.currentTimeMillis();
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
         Object principal = authentication.getPrincipal();
@@ -121,6 +139,8 @@ public class ImageController {
         s3client.deleteObject(deleteObjectRequest);
         // delete the file from database
         imageDao.delete(imageId);
+        long responseTime = System.currentTimeMillis() - startTime;
+        cloudWatchService.sendCustomMetric("ImageDeleted", 1, responseTime);
         return new ExceptionMessage().success();
     }
 
