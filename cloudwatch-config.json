@@ -6,36 +6,12 @@
   "metrics": {
     "namespace": "CSYE6225",
     "metrics_collected": {
-      "CSYE6225": {
-        "dimensions": [
-          {
-            "Name": "Reqcount",
-            "Value": "count"
-          },
-          {
-            "Name": "Reqtimer",
-            "Value": "timer"
-          }
-        ],
         "statsd":{
           "service_address":":8125",
           "metrics_collection_interval":15,
-          "metrics_aggregation_interval":300,
-          "metric_declarations": [
-            {
-              "metric_name": "${metric_name}-count",
-              "unit": "Count",
-              "aggregation_method": "sum"
-            },
-            {
-              "metric_name": "${metric_name}-timer",
-              "unit": "Milliseconds",
-              "aggregation_method": "average"
-            }
-          ]
+          "metrics_aggregation_interval":300
         }
       }
-    }
   },
   "logs": {
     "logs_collected": {
@@ -47,14 +23,7 @@
             "log_stream_name": "webapp",
             "timezone": "Local",
             "timestamp_format": "%Y-%m-%d %H:%M:%S",
-            "multi_line_start_pattern": "{timestamp_format}",
-            "time_zone": "EST",
-            "filters": [
-              {
-                "pattern": "{timestamp_format}",
-                "recent": 300
-              }
-            ]
+            "multi_line_start_pattern": "{timestamp_format}"
           }
         ]
       }
