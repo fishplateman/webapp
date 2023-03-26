@@ -16,13 +16,13 @@ public class CloudWatchService {
                 .withValue("webapp");
 
         MetricDatum requestCountDatum = new MetricDatum()
-                .withMetricName(name)
+                .withMetricName(name+"-count")
                 .withUnit(StandardUnit.Count.toString())
                 .withValue(requestCount)
                 .withDimensions(dimension);
 
         MetricDatum responseTimeDatum = new MetricDatum()
-                .withMetricName("MyCustomMetricResponseTime")
+                .withMetricName(name+"-timer")
                 .withUnit(StandardUnit.Milliseconds.toString())
                 .withValue(responseTime)
                 .withDimensions(dimension);
