@@ -18,10 +18,10 @@
       "files": {
         "collect_list": [
           {
-            "file_path": "/var/log/csye6225.log",
+            "file_path": "/var/logs/csye6225.log",
             "log_group_name": "csye6225",
-            "log_stream_name": "webapp",
-            "timezone": "Local",
+            "log_stream_name": "webapp_logs",
+            "timezone": "EDT",
             "timestamp_format": "%Y-%m-%d %H:%M:%S",
             "multi_line_start_pattern": "{timestamp_format}"
           }

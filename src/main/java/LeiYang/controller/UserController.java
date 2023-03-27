@@ -15,12 +15,15 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Resource;
 import java.security.Principal;
 
 @RestController
 public class UserController {
+    private static final Logger logger = LogManager.getLogger(UserController.class);
     //test url
     @RequestMapping("/healthz")
     public ExceptionMessage responseHealth(){
@@ -40,6 +43,7 @@ public class UserController {
             if(userService.find(userVo.getEmail()) != null){
                 long responseTime = System.currentTimeMillis() - startTime;
                 cloudWatchService.sendCustomMetric("UserCreationFailed", 1, responseTime);
+                logger.info("uploadProductImage Failed");
                 return new ExceptionMessage().fail();
             }
             else{
@@ -49,11 +53,13 @@ public class UserController {
                 userService.save(users);
                 long responseTime = System.currentTimeMillis() - startTime;
                 cloudWatchService.sendCustomMetric("UserCreated", 1, responseTime);
+                logger.info("UserCreated succeed");
                 return new ExceptionMessage().success();
             }
         }
         long responseTime = System.currentTimeMillis() - startTime;
         cloudWatchService.sendCustomMetric("InvalidEmail", 1, responseTime);
+        logger.info("InvalidEmail");
         return new ExceptionMessage().fail();
     }
 
@@ -69,12 +75,14 @@ public class UserController {
         {
             long responseTime = System.currentTimeMillis() - startTime;
             cloudWatchService.sendCustomMetric("UserUpdateFailed", 1, responseTime);
+            logger.info("UserUpdate Failed");
             return new ExceptionMessage().fail();
         }
         String password = Bycrypt.encryptPassword(user.getPassword());
         userService.update(user.getFirstName(), user.getLastName(), password, id);
         long responseTime = System.currentTimeMillis() - startTime;
         cloudWatchService.sendCustomMetric("UserUpdated", 1, responseTime);
+        logger.info("UserUpdated Succeed");
         return new ExceptionMessage().success();
     }
 
@@ -85,9 +93,11 @@ public class UserController {
         if (users == null) {
             long responseTime = System.currentTimeMillis() - startTime;
             cloudWatchService.sendCustomMetric("UserNotFound", 1, responseTime);
+            logger.info("UserNotFound");
         } else {
             long responseTime = System.currentTimeMillis() - startTime;
             cloudWatchService.sendCustomMetric("UserFound", 1, responseTime);
+            logger.info("UserFound Succeed");
         }
         return users;
     }

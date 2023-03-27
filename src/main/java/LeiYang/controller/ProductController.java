@@ -12,12 +12,15 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Resource;
 import java.security.Principal;
 
 @RestController
 public class ProductController {
+    private static final Logger logger = LogManager.getLogger(ProductController.class);
     @Resource
     private ProductService productService;
     @Resource
@@ -29,6 +32,7 @@ public class ProductController {
         long startTime = System.currentTimeMillis();
         if(productService.find(productVo.getSku()) != null){
             long responseTime = System.currentTimeMillis() - startTime;
+            logger.info("ProductCreationFailed");
             cloudWatchService.sendCustomMetric("ProductCreationFailed", 1, responseTime);
             return new ExceptionMessage().fail();
         }
@@ -42,6 +46,7 @@ public class ProductController {
             productService.save(product);
             long responseTime = System.currentTimeMillis() - startTime;
             cloudWatchService.sendCustomMetric("ProductCreated", 1, responseTime);
+            logger.info("ProductCreated");
             return productService.findTheLastOne();
         }
     }
@@ -53,11 +58,13 @@ public class ProductController {
         if (existingProduct == null) {
             long responseTime = System.currentTimeMillis() - startTime;
             cloudWatchService.sendCustomMetric("ProductUpdateFailed", 1, responseTime);
+            logger.info("ProductUpdate Failed");
             return new ExceptionMessage().fail();
         }
         productService.update(productVo.getName(), productVo.getDescription(), productVo.getSku(), productVo.getManufacturer(), productVo.getQuantity(), productId);
         long responseTime = System.currentTimeMillis() - startTime;
         cloudWatchService.sendCustomMetric("ProductUpdated", 1, responseTime);
+        logger.info("ProductUpdated Succeed");
         return new ExceptionMessage().success();
     }
 
@@ -68,6 +75,7 @@ public class ProductController {
         if (existingProduct == null) {
             long responseTime = System.currentTimeMillis() - startTime;
             cloudWatchService.sendCustomMetric("ProductUpdateFailed", 1, responseTime);
+            logger.info("ProductUpdate Failed");
             return new ExceptionMessage().fail();
         }
         boolean isUpdated = false;
@@ -96,11 +104,13 @@ public class ProductController {
             productService.update(existingProduct.getName(), existingProduct.getDescription(), existingProduct.getSku(), existingProduct.getManufacturer(), existingProduct.getQuantity(), productId);
             long responseTime = System.currentTimeMillis() - startTime;
             cloudWatchService.sendCustomMetric("ProductUpdated(Patch)", 1, responseTime);
+            logger.info("ProductUpdated(Patch) succeed");
             return new ExceptionMessage().success();
         } else {
             productService.update(existingProduct.getName(), existingProduct.getDescription(), existingProduct.getSku(), existingProduct.getManufacturer(), existingProduct.getQuantity(), productId);
             long responseTime = System.currentTimeMillis() - startTime;
             cloudWatchService.sendCustomMetric("ProductUpdateFailed(Patch)", 1, responseTime);
+            logger.info("ProductUpdated(Patch) failed");
             return new ExceptionMessage().fail();
         }
     }
@@ -112,9 +122,11 @@ public class ProductController {
         if (result.equals(new ExceptionMessage().success())) {
             long responseTime = System.currentTimeMillis() - startTime;
             cloudWatchService.sendCustomMetric("ProductDeleted", 1, responseTime);
+            logger.info("ProductDeleted succeed");
         } else {
             long responseTime = System.currentTimeMillis() - startTime;
             cloudWatchService.sendCustomMetric("ProductDeleteFailed", 1, responseTime);
+            logger.info("ProductDelete Failed");
         }
         return result;
     }
@@ -126,9 +138,11 @@ public class ProductController {
         if (product == null) {
             long responseTime = System.currentTimeMillis() - startTime;
             cloudWatchService.sendCustomMetric("ProductNotFound", 1, responseTime);
+            logger.info("ProductNotFound");
         } else {
             long responseTime = System.currentTimeMillis() - startTime;
             cloudWatchService.sendCustomMetric("ProductFound", 1, responseTime);
+            logger.info("ProductFound");
         }
         return product;
     }
