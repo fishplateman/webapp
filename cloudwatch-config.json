@@ -20,7 +20,7 @@
           {
             "file_path": "/var/logs/csye6225.log",
             "log_group_name": "csye6225",
-            "log_stream_name": "webapp_logs",
+            "log_stream_name": "{instance_id}",
             "timezone": "Local",
             "timestamp_format": "%Y-%m-%d %H:%M:%S",
             "multi_line_start_pattern": "{timestamp_format}"
@@ -28,7 +28,7 @@
         ]
       }
     },
-    "log_stream_name": "my_log_stream_name",
+    "log_stream_name": "{instance_id}",
     "force_flush_interval" : 15
   }
 }
