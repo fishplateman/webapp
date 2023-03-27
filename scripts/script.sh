@@ -9,9 +9,6 @@ echo "remove jdk..."
 sudo rpm -qa | grep -i java | xargs -n1 rpm -e --nodeps
 echo "installing jdk..."
 sudo yum install -y java-1.8.0-openjdk
-echo "installing polkit..."
-sudo amazon-linux-extras install -y epel
-sudo yum install -y polkit
 echo "chmod"
 sudo chmod 777 /etc/systemd/system
 echo "configure systemd"
@@ -44,9 +41,8 @@ cloudwatch_agent_installed=$(systemctl list-unit-files | grep amazon-cloudwatch-
 sudo chmod 777 /opt
 sudo mv /tmp/cloudwatch-config.json /opt/cloudwatch-config.json
 
-sudo sed -i 's/^ExecStart=.*/ExecStart=\/bin\/bash -c '\''sudo \/opt\/aws\/amazon-cloudwatch-agent\/bin\/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:\/opt\/cloudwatch-config.json -s'\''/g' /etc/systemd/system/amazon-cloudwatch-agent.service
+sudo sed -i 's/^ExecStart=.*/ExecStart=sudo \/opt\/aws\/amazon-cloudwatch-agent\/bin\/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:\/opt\/cloudwatch-config.json -s/g' /etc/systemd/system/amazon-cloudwatch-agent.service
 sudo sed -i 's/^Restart=.*/Restart=always/g' /etc/systemd/system/amazon-cloudwatch-agent.service
 
 sudo systemctl daemon-reload
 sudo systemctl enable amazon-cloudwatch-agent
-sudo systemctl start amazon-cloudwatch-agent
