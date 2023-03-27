@@ -18,7 +18,7 @@ sudo echo "[Unit]
 Description=Web Application
 
 [Service]
-ExecStart=/bin/bash -c 'cd /tmp; java -jar /tmp/demo-1.0-SNAPSHOT.jar -Dspring.config.location=/tmp/application.yml'
+ExecStart=/bin/bash -c 'cd /tmp; sudo java -jar /tmp/demo-1.0-SNAPSHOT.jar -Dspring.config.location=/tmp/application.yml'
 Restart=always
 User=root
 
@@ -28,7 +28,7 @@ WantedBy=multi-user.target
 sudo systemctl daemon-reload
 sudo systemctl enable webapp
 
-sudo chmod 777 /var/logs
+sudo chmod 777 /var/logs/
 
 cd /
 sudo yum install -y amazon-cloudwatch-agent

@@ -1,6 +1,7 @@
 import LeiYang.entity.Users;
-import org.junit.Test;
+
 import org.junit.internal.runners.JUnit4ClassRunner;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.springframework.beans.factory.annotation.Autowired;

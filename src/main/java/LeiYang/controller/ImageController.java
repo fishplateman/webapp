@@ -33,12 +33,15 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Resource;
 
 @RestController
 @RequestMapping("/v1")
 public class ImageController {
+    private static final Logger logger = LogManager.getLogger(ImageController.class);
     @Resource
     private ImageDao imageDao;
     @Resource
@@ -77,6 +80,9 @@ public class ImageController {
         String userName = ((UserDetails) principal).getUsername();
         long id = userService.getId(userName);
         if(id != productService.findOwnerId(productId)){
+            long responseTime = System.currentTimeMillis() - startTime;
+            logger.info("uploadProductImage failed: user with ID {} is not the owner of product with ID {}", id, productId);
+            cloudWatchService.sendCustomMetric("ImageUploadedFail", 1, responseTime);
             return new ExceptionMessage().fail();
         }
         // Get file extension
@@ -99,6 +105,7 @@ public class ImageController {
         imageDao.save(image);
         long responseTime = System.currentTimeMillis() - startTime;
         cloudWatchService.sendCustomMetric("ImageUploaded", 1, responseTime);
+        logger.info("uploadProductImage succeed");
         return ResponseEntity.status(HttpStatus.OK).body(image);
     }
 
@@ -108,6 +115,7 @@ public class ImageController {
         if (productService.findById(productId) == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Arrays.asList("404, No such product"));
         long responseTime = System.currentTimeMillis() - startTime;
         cloudWatchService.sendCustomMetric("GetProductImageList", 1, responseTime);
+        logger.info("GetProductImageList succeed");
         return ResponseEntity.status(HttpStatus.OK).body(imageDao.findByProductId(productId));
     }
 
@@ -118,6 +126,7 @@ public class ImageController {
         if (productService.findById(productId) == null) return new ExceptionMessage().fail();
         long responseTime = System.currentTimeMillis() - startTime;
         cloudWatchService.sendCustomMetric("GetProductImage", 1, responseTime);
+        logger.info("GetProductImage succeed");
         return  ResponseEntity.status(HttpStatus.OK).body(imageDao.findByDoubleId(imageId,productId));
     }
 
@@ -141,6 +150,7 @@ public class ImageController {
         imageDao.delete(imageId);
         long responseTime = System.currentTimeMillis() - startTime;
         cloudWatchService.sendCustomMetric("ImageDeleted", 1, responseTime);
+        logger.info("ImageDeleted succeed");
         return new ExceptionMessage().success();
     }
 
