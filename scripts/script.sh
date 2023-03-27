@@ -30,6 +30,10 @@ sudo systemctl enable webapp
 
 sudo mkdir /var/logs/
 sudo chmod 777 /var/logs/
+sudo touch /var/logs/csye6225.log
+sudo chown ec2-user /var/logs/csye6225.log
+sudo chgrp ec2-user /var/logs/csye6225.log
+sudo chmod 664 /var/logs/csye6225.log
 
 cd /
 sudo yum install -y amazon-cloudwatch-agent
