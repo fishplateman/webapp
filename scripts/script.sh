@@ -28,12 +28,17 @@ WantedBy=multi-user.target
 sudo systemctl daemon-reload
 sudo systemctl enable webapp
 
-sudo mkdir /var/logs/
-sudo chmod 777 /var/logs/
-sudo touch /var/logs/csye6225.log
-sudo chown ec2-user /var/logs/csye6225.log
-sudo chgrp ec2-user /var/logs/csye6225.log
-sudo chmod 664 /var/logs/csye6225.log
+sudo mkdir /var/log/
+sudo chmod 777 /var/log/
+sudo touch /var/log/csye6225.log
+sudo chown ec2-user /var/log/csye6225.log
+sudo chgrp ec2-user /var/log/csye6225.log
+sudo chmod 664 /var/log/csye6225.log
+
+sudo touch /var/log/amazon-cloudwatch-agent.log
+sudo chown ec2-user /var/log/amazon-cloudwatch-agent.log
+sudo chgrp ec2-user /var/log/amazon-cloudwatch-agent.log
+sudo chmod 664 /var/log/amazon-cloudwatch-agent.log
 
 cd /
 sudo yum install -y amazon-cloudwatch-agent
