@@ -21,7 +21,7 @@
             "file_path": "/var/logs/csye6225.log",
             "log_group_name": "csye6225",
             "log_stream_name": "webapp_logs",
-            "timezone": "EDT",
+            "timezone": "local",
             "timestamp_format": "%Y-%m-%d %H:%M:%S",
             "multi_line_start_pattern": "{timestamp_format}"
           }

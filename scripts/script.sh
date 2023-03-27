@@ -28,6 +28,7 @@ WantedBy=multi-user.target
 sudo systemctl daemon-reload
 sudo systemctl enable webapp
 
+sudo mkdir /var/logs/
 sudo chmod 777 /var/logs/
 
 cd /
