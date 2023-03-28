@@ -41,4 +41,13 @@ cloudwatch_agent_installed=$(systemctl list-unit-files | grep amazon-cloudwatch-
 sudo chmod 777 /opt
 sudo mv /tmp/cloudwatch-config.json /opt/cloudwatch-config.json
 
-sudo cp /opt/cloudwatch-config.json /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+sudo sed -i 's/^ExecStart=.*/ExecStart=\/opt\/aws\/amazon-cloudwatch-agent\/bin\/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:\/opt\/cloudwatch-config.json -s/g' /etc/systemd/system/amazon-cloudwatch-agent.service
+sudo sed -i 's/^Restart=.*/Restart=always/g' /etc/systemd/system/amazon-cloudwatch-agent.service
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+-a fetch-config \
+-m ec2 \
+-c file:/opt/cloudwatch-config.json \
+-s
+
+sudo systemctl daemon-reload
+sudo systemctl enable amazon-cloudwatch-agent
