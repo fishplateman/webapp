@@ -35,19 +35,17 @@ sudo chown ec2-user /var/log/csye6225.log
 sudo chgrp ec2-user /var/log/csye6225.log
 sudo chmod 664 /var/log/csye6225.log
 
-sudo touch /var/log/amazon-cloudwatch-agent.log
-sudo chown ec2-user /var/log/amazon-cloudwatch-agent.log
-sudo chgrp ec2-user /var/log/amazon-cloudwatch-agent.log
-sudo chmod 664 /var/log/amazon-cloudwatch-agent.log
-
 cd /
 sudo yum install -y amazon-cloudwatch-agent
 cloudwatch_agent_installed=$(systemctl list-unit-files | grep amazon-cloudwatch-agent.service | wc -l)
 sudo chmod 777 /opt
 sudo mv /tmp/cloudwatch-config.json /opt/cloudwatch-config.json
 
-sudo sed -i 's/^ExecStart=.*/ExecStart=\/opt\/aws\/amazon-cloudwatch-agent\/bin\/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:\/opt\/cloudwatch-config.json -s/g' /etc/systemd/system/amazon-cloudwatch-agent.service
-sudo sed -i 's/^Restart=.*/Restart=always/g' /etc/systemd/system/amazon-cloudwatch-agent.service
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+-a fetch-config \
+-m ec2 \
+-c file:/opt/cloudwatch-config.json \
+-s
 
 sudo systemctl daemon-reload
 sudo systemctl enable amazon-cloudwatch-agent
