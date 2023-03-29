@@ -18,7 +18,7 @@ sudo echo "[Unit]
 Description=Web Application
 
 [Service]
-ExecStart=/bin/bash -c 'cd /tmp; kill $(lsof -t -i:8080); java -jar /tmp/demo-1.0-SNAPSHOT.jar -Dspring.config.location=/tmp/application.yml'
+ExecStart=/bin/bash -c 'cd /tmp; kill -9 $(lsof -t -i:8080); java -jar /tmp/demo-1.0-SNAPSHOT.jar -Dspring.config.location=/tmp/application.yml'
 Restart=always
 User=root
 
