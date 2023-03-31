@@ -9,6 +9,7 @@ import LeiYang.util.ExceptionMessage;
 import LeiYang.entity.UserVo;
 import LeiYang.service.UserService;
 
+import com.timgroup.statsd.StatsDClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -30,6 +31,8 @@ public class UserController {
         return new ExceptionMessage().success();
     }
 
+    @Autowired
+    private StatsDClient statsDClient;
     @Resource
     private UserService userService;
     @Autowired
@@ -42,6 +45,7 @@ public class UserController {
         if(EmailVerify.isValidEmail(userVo.getEmail())){
             if(userService.find(userVo.getEmail()) != null){
                 long responseTime = System.currentTimeMillis() - startTime;
+                statsDClient.incrementCounter("UserCreationFailed");
                 cloudWatchService.sendCustomMetric("UserCreationFailed", 1, responseTime);
                 logger.info("uploadProductImage Failed");
                 return new ExceptionMessage().fail();
@@ -52,12 +56,14 @@ public class UserController {
                 Users users = new Users(userVo.getFirstName(), userVo.getLastName(), userVo.getEmail(),password);
                 userService.save(users);
                 long responseTime = System.currentTimeMillis() - startTime;
+                statsDClient.incrementCounter("UserCreated");
                 cloudWatchService.sendCustomMetric("UserCreated", 1, responseTime);
                 logger.info("UserCreated succeed");
                 return new ExceptionMessage().success();
             }
         }
         long responseTime = System.currentTimeMillis() - startTime;
+        statsDClient.incrementCounter("InvalidEmail");
         cloudWatchService.sendCustomMetric("InvalidEmail", 1, responseTime);
         logger.info("InvalidEmail");
         return new ExceptionMessage().fail();
@@ -74,6 +80,7 @@ public class UserController {
         if(!userName.equals(userService.get(id).getEmail_address()))
         {
             long responseTime = System.currentTimeMillis() - startTime;
+            statsDClient.incrementCounter("UserUpdateFailed");
             cloudWatchService.sendCustomMetric("UserUpdateFailed", 1, responseTime);
             logger.info("UserUpdate Failed");
             return new ExceptionMessage().fail();
@@ -81,6 +88,7 @@ public class UserController {
         String password = Bycrypt.encryptPassword(user.getPassword());
         userService.update(user.getFirstName(), user.getLastName(), password, id);
         long responseTime = System.currentTimeMillis() - startTime;
+        statsDClient.incrementCounter("UserUpdated");
         cloudWatchService.sendCustomMetric("UserUpdated", 1, responseTime);
         logger.info("UserUpdated Succeed");
         return new ExceptionMessage().success();
@@ -92,10 +100,12 @@ public class UserController {
         Users users = userService.get(id);
         if (users == null) {
             long responseTime = System.currentTimeMillis() - startTime;
+            statsDClient.incrementCounter("UserNotFound");
             cloudWatchService.sendCustomMetric("UserNotFound", 1, responseTime);
             logger.info("UserNotFound");
         } else {
             long responseTime = System.currentTimeMillis() - startTime;
+            statsDClient.incrementCounter("UserFound");
             cloudWatchService.sendCustomMetric("UserFound", 1, responseTime);
             logger.info("UserFound Succeed");
         }
