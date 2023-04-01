@@ -83,8 +83,9 @@ public class ImageController {
         String userName = ((UserDetails) principal).getUsername();
         long id = userService.getId(userName);
         if(id != productService.findOwnerId(productId)){
-            statsDClient.incrementCounter("ImageUploadedFail");
+            statsDClient.incrementCounter("image.uploaded.fail.count");
             long responseTime = System.currentTimeMillis() - startTime;
+            statsDClient.recordExecutionTime("image.uploaded.fail.time", responseTime);
             logger.info("uploadProductImage failed: user with ID {} is not the owner of product with ID {}", id, productId);
             cloudWatchService.sendCustomMetric("ImageUploadedFail", 1, responseTime);
             return new ExceptionMessage().fail();
@@ -108,7 +109,8 @@ public class ImageController {
         Image image = new Image(productId,fileName,fileUrl);
         imageDao.save(image);
         long responseTime = System.currentTimeMillis() - startTime;
-        statsDClient.incrementCounter("ImageUploaded");
+        statsDClient.incrementCounter("image.uploaded.succeed.count");
+        statsDClient.recordExecutionTime("image.uploaded.succeed.time", responseTime);
         cloudWatchService.sendCustomMetric("ImageUploaded", 1, responseTime);
         logger.info("uploadProductImage succeed");
         return ResponseEntity.status(HttpStatus.OK).body(image);
@@ -119,7 +121,8 @@ public class ImageController {
         long startTime = System.currentTimeMillis();
         if (productService.findById(productId) == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Arrays.asList("404, No such product"));
         long responseTime = System.currentTimeMillis() - startTime;
-        statsDClient.incrementCounter("GetProductImageList succeed");
+        statsDClient.incrementCounter("imagelist.got.succeed.count");
+        statsDClient.recordExecutionTime("imagelist.got.succeed.time", responseTime);
         cloudWatchService.sendCustomMetric("GetProductImageList", 1, responseTime);
         logger.info("GetProductImageList succeed");
         return ResponseEntity.status(HttpStatus.OK).body(imageDao.findByProductId(productId));
@@ -130,8 +133,9 @@ public class ImageController {
                                   @PathVariable("image_id") Long imageId) throws IOException {
         long startTime = System.currentTimeMillis();
         if (productService.findById(productId) == null) return new ExceptionMessage().fail();
-        statsDClient.incrementCounter("GetProductImage succeed");
+        statsDClient.incrementCounter("image.got.succeed.count");
         long responseTime = System.currentTimeMillis() - startTime;
+        statsDClient.recordExecutionTime("image.got.succeed.time", responseTime);
         cloudWatchService.sendCustomMetric("GetProductImage", 1, responseTime);
         logger.info("GetProductImage succeed");
         return  ResponseEntity.status(HttpStatus.OK).body(imageDao.findByDoubleId(imageId,productId));
@@ -155,8 +159,9 @@ public class ImageController {
         s3client.deleteObject(deleteObjectRequest);
         // delete the file from database
         imageDao.delete(imageId);
-        statsDClient.incrementCounter("ImageDeleted succeed");
+        statsDClient.incrementCounter("image.deleted.succeed.count");
         long responseTime = System.currentTimeMillis() - startTime;
+        statsDClient.recordExecutionTime("image.deleted.succeed.time", responseTime);
         cloudWatchService.sendCustomMetric("ImageDeleted", 1, responseTime);
         logger.info("ImageDeleted succeed");
         return new ExceptionMessage().success();
