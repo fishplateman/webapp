@@ -34,8 +34,9 @@ public class ProductController {
     public Object add(@RequestBody ProductVo productVo){
         long startTime = System.currentTimeMillis();
         if(productService.find(productVo.getSku()) != null){
-            statsDClient.incrementCounter("ProductCreationFailed");
+            statsDClient.incrementCounter("product.created.failed.count");
             long responseTime = System.currentTimeMillis() - startTime;
+            statsDClient.recordExecutionTime("product.created.failed.time", responseTime);
             logger.info("ProductCreationFailed");
             cloudWatchService.sendCustomMetric("ProductCreationFailed", 1, responseTime);
             return new ExceptionMessage().fail();
@@ -48,8 +49,9 @@ public class ProductController {
             long id = userService.getId(userName);
             Product product = new Product(productVo.getName(), productVo.getDescription(), productVo.getSku(),productVo.getManufacturer(),productVo.getQuantity(), id);
             productService.save(product);
-            statsDClient.incrementCounter("ProductCreated");
+            statsDClient.incrementCounter("product.created.succeed.count");
             long responseTime = System.currentTimeMillis() - startTime;
+            statsDClient.recordExecutionTime("product.created.succeed.time", responseTime);
             cloudWatchService.sendCustomMetric("ProductCreated", 1, responseTime);
             logger.info("ProductCreated");
             return productService.findTheLastOne();
@@ -62,15 +64,17 @@ public class ProductController {
         Product existingProduct = productService.findById(productId);
         if (existingProduct == null) {
             long responseTime = System.currentTimeMillis() - startTime;
-            statsDClient.incrementCounter("ProductUpdateFailed");
+            statsDClient.incrementCounter("product.updated.failed.count");
             cloudWatchService.sendCustomMetric("ProductUpdateFailed", 1, responseTime);
+            statsDClient.recordExecutionTime("product.updated.failed.time", responseTime);
             logger.info("ProductUpdate Failed");
             return new ExceptionMessage().fail();
         }
         productService.update(productVo.getName(), productVo.getDescription(), productVo.getSku(), productVo.getManufacturer(), productVo.getQuantity(), productId);
         long responseTime = System.currentTimeMillis() - startTime;
-        statsDClient.incrementCounter("ProductUpdated");
+        statsDClient.incrementCounter("product.updated.succeed.count");
         cloudWatchService.sendCustomMetric("ProductUpdated", 1, responseTime);
+        statsDClient.recordExecutionTime("product.updated.succeed.time", responseTime);
         logger.info("ProductUpdated Succeed");
         return new ExceptionMessage().success();
     }
@@ -80,10 +84,11 @@ public class ProductController {
         long startTime = System.currentTimeMillis();
         Product existingProduct = productService.findById(productId);
         if (existingProduct == null) {
-            statsDClient.incrementCounter("ProductUpdateFailed");
+            statsDClient.incrementCounter("product.updated.patch.failed.count");
             long responseTime = System.currentTimeMillis() - startTime;
-            cloudWatchService.sendCustomMetric("ProductUpdateFailed", 1, responseTime);
-            logger.info("ProductUpdate Failed");
+            statsDClient.recordExecutionTime("product.updated.patch.failed.time", responseTime);
+            cloudWatchService.sendCustomMetric("ProductUpdateFailed(Patch)", 1, responseTime);
+            logger.info("ProductUpdate Failed(Patch Method)");
             return new ExceptionMessage().fail();
         }
         boolean isUpdated = false;
@@ -110,15 +115,17 @@ public class ProductController {
         if (isUpdated) {
             //productService.update(existingProduct);
             productService.update(existingProduct.getName(), existingProduct.getDescription(), existingProduct.getSku(), existingProduct.getManufacturer(), existingProduct.getQuantity(), productId);
-            statsDClient.incrementCounter("ProductUpdated(Patch) succeed");
+            statsDClient.incrementCounter("product.updated.patch.succeed.count");
             long responseTime = System.currentTimeMillis() - startTime;
+            statsDClient.recordExecutionTime("product.updated.patch.succeed.time", responseTime);
             cloudWatchService.sendCustomMetric("ProductUpdated(Patch)", 1, responseTime);
             logger.info("ProductUpdated(Patch) succeed");
             return new ExceptionMessage().success();
         } else {
             productService.update(existingProduct.getName(), existingProduct.getDescription(), existingProduct.getSku(), existingProduct.getManufacturer(), existingProduct.getQuantity(), productId);
             long responseTime = System.currentTimeMillis() - startTime;
-            statsDClient.incrementCounter("ProductUpdated(Patch) failed");
+            statsDClient.recordExecutionTime("product.updated.patch.failed.time", responseTime);
+            statsDClient.incrementCounter("product.updated.patch.failed.count");
             cloudWatchService.sendCustomMetric("ProductUpdateFailed(Patch)", 1, responseTime);
             logger.info("ProductUpdated(Patch) failed");
             return new ExceptionMessage().fail();
@@ -130,13 +137,15 @@ public class ProductController {
         long startTime = System.currentTimeMillis();
         ExceptionMessage result = productService.delete(productId);
         if (result.equals(new ExceptionMessage().success())) {
-            statsDClient.incrementCounter("ProductDeleted succeed");
+            statsDClient.incrementCounter("product.deleted.succeed.count");
             long responseTime = System.currentTimeMillis() - startTime;
+            statsDClient.recordExecutionTime("product.deleted.succeed.time", responseTime);
             cloudWatchService.sendCustomMetric("ProductDeleted", 1, responseTime);
             logger.info("ProductDeleted succeed");
         } else {
-            statsDClient.incrementCounter("ProductDelete Failed");
+            statsDClient.incrementCounter("product.deleted.failed.count");
             long responseTime = System.currentTimeMillis() - startTime;
+            statsDClient.recordExecutionTime("product.deleted.failed.time", responseTime);
             cloudWatchService.sendCustomMetric("ProductDeleteFailed", 1, responseTime);
             logger.info("ProductDelete Failed");
         }
@@ -148,13 +157,15 @@ public class ProductController {
         long startTime = System.currentTimeMillis();
         Product product = productService.findById(productId);
         if (product == null) {
-            statsDClient.incrementCounter("ProductNotFound");
+            statsDClient.incrementCounter("product.not.found.count");
             long responseTime = System.currentTimeMillis() - startTime;
+            statsDClient.recordExecutionTime("product.not.found.time", responseTime);
             cloudWatchService.sendCustomMetric("ProductNotFound", 1, responseTime);
             logger.info("ProductNotFound");
         } else {
-            statsDClient.incrementCounter("ProductFound");
+            statsDClient.incrementCounter("product.got.succeed.count");
             long responseTime = System.currentTimeMillis() - startTime;
+            statsDClient.recordExecutionTime("product.got.succeed.time", responseTime);
             cloudWatchService.sendCustomMetric("ProductFound", 1, responseTime);
             logger.info("ProductFound");
         }

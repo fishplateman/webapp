@@ -45,9 +45,10 @@ public class UserController {
         if(EmailVerify.isValidEmail(userVo.getEmail())){
             if(userService.find(userVo.getEmail()) != null){
                 long responseTime = System.currentTimeMillis() - startTime;
-                statsDClient.incrementCounter("UserCreationFailed");
+                statsDClient.incrementCounter("user.created.failed.count");
+                statsDClient.recordExecutionTime("user.created.failed.time", responseTime);
                 cloudWatchService.sendCustomMetric("UserCreationFailed", 1, responseTime);
-                logger.info("uploadProductImage Failed");
+                logger.info("UserCreationFailed Failed");
                 return new ExceptionMessage().fail();
             }
             else{
@@ -56,14 +57,16 @@ public class UserController {
                 Users users = new Users(userVo.getFirstName(), userVo.getLastName(), userVo.getEmail(),password);
                 userService.save(users);
                 long responseTime = System.currentTimeMillis() - startTime;
-                statsDClient.incrementCounter("UserCreated");
+                statsDClient.incrementCounter("user.created.succeed.count");
+                statsDClient.recordExecutionTime("user.created.succeed.time", responseTime);
                 cloudWatchService.sendCustomMetric("UserCreated", 1, responseTime);
                 logger.info("UserCreated succeed");
                 return new ExceptionMessage().success();
             }
         }
         long responseTime = System.currentTimeMillis() - startTime;
-        statsDClient.incrementCounter("InvalidEmail");
+        statsDClient.incrementCounter("invalidemail.count");
+        statsDClient.recordExecutionTime("invalidemail.time", responseTime);
         cloudWatchService.sendCustomMetric("InvalidEmail", 1, responseTime);
         logger.info("InvalidEmail");
         return new ExceptionMessage().fail();
@@ -80,7 +83,8 @@ public class UserController {
         if(!userName.equals(userService.get(id).getEmail_address()))
         {
             long responseTime = System.currentTimeMillis() - startTime;
-            statsDClient.incrementCounter("UserUpdateFailed");
+            statsDClient.incrementCounter("user.updated.failed.count");
+            statsDClient.recordExecutionTime("user.updated.failed.time", responseTime);
             cloudWatchService.sendCustomMetric("UserUpdateFailed", 1, responseTime);
             logger.info("UserUpdate Failed");
             return new ExceptionMessage().fail();
@@ -88,7 +92,8 @@ public class UserController {
         String password = Bycrypt.encryptPassword(user.getPassword());
         userService.update(user.getFirstName(), user.getLastName(), password, id);
         long responseTime = System.currentTimeMillis() - startTime;
-        statsDClient.incrementCounter("UserUpdated");
+        statsDClient.incrementCounter("user.updated.succeed.count");
+        statsDClient.recordExecutionTime("user.updated.succeed.time", responseTime);
         cloudWatchService.sendCustomMetric("UserUpdated", 1, responseTime);
         logger.info("UserUpdated Succeed");
         return new ExceptionMessage().success();
@@ -100,12 +105,14 @@ public class UserController {
         Users users = userService.get(id);
         if (users == null) {
             long responseTime = System.currentTimeMillis() - startTime;
-            statsDClient.incrementCounter("UserNotFound");
+            statsDClient.incrementCounter("user.not.found.count");
+            statsDClient.recordExecutionTime("user.not.found.time", responseTime);
             cloudWatchService.sendCustomMetric("UserNotFound", 1, responseTime);
             logger.info("UserNotFound");
         } else {
             long responseTime = System.currentTimeMillis() - startTime;
-            statsDClient.incrementCounter("UserFound");
+            statsDClient.incrementCounter("user.not.found.count");
+            statsDClient.recordExecutionTime("user.not.found.time", responseTime);
             cloudWatchService.sendCustomMetric("UserFound", 1, responseTime);
             logger.info("UserFound Succeed");
         }
