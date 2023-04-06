@@ -28,6 +28,12 @@ public class UserController {
     //test url
     @RequestMapping("/healthz")
     public ExceptionMessage responseHealth(){
+        long startTime = System.currentTimeMillis();
+        long responseTime = System.currentTimeMillis() - startTime;
+        statsDClient.incrementCounter("healthz.count");
+        statsDClient.recordExecutionTime("healthz.time", responseTime);
+        cloudWatchService.sendCustomMetric("Healthz", 1, responseTime);
+        logger.info("Healthz");
         return new ExceptionMessage().success();
     }
 
