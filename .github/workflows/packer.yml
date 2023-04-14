@@ -31,7 +31,7 @@ jobs:
         run: packer build -var aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }} -var aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }} AMI.json
 
       # Get Latest AMI ID
-      - name: Run packer
+      - name: Get AMI ID
         run: |
           latest_ami_id=$(aws ec2 describe-images --owners 807109680293 --query 'Images[].[ImageId, CreationDate]' --output text | sort -k2 -r | head -n1 | awk '{print $1}')
           echo "Latest AMI ID: $latest_ami_id"

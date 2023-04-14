@@ -4,7 +4,7 @@
     "access_key": "{{user `aws_access_key`}}",
     "secret_key": "{{user `aws_secret_key`}}",
     "region": "us-east-1",
-    "ami_users": ["057553252157"],
+    "ami_users": ["057553252157","447696113515"],
     "source_ami": "ami-0dfcb1ef8550277af",
     "instance_type": "t2.micro",
     "ssh_username": "ec2-user",
