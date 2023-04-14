@@ -39,12 +39,13 @@ jobs:
         run: |
           latest_ami_id=$(aws ec2 describe-images --owners 807109680293 --query 'Images[].[ImageId, CreationDate]' --output text | sort -k2 -r | head -n1 | awk '{print $1}')
           echo "Latest AMI ID: $latest_ami_id"
+          echo "LATEST_AMI_ID=$latest_ami_id" >> $GITHUB_ENV
 
       # Create a new Launch Template for the autoscaling group.
       - name: Create Launch Template
         run: |
           TEMPLATE_NAME="my-new-launch-template"
-          TEMPLATE_VERSION=$(aws ec2 create-launch-template --launch-template-name $TEMPLATE_NAME --launch-template-data "{\"ImageId\":\"$latest_ami_id\",\"InstanceType\":\"t2.micro\"}" | jq '.LaunchTemplate.LatestVersionNumber')
+          TEMPLATE_VERSION=$(aws ec2 create-launch-template --launch-template-name $TEMPLATE_NAME --launch-template-data "{\"ImageId\":\"$LATEST_AMI_ID\",\"InstanceType\":\"t2.micro\"}" | jq '.LaunchTemplate.LatestVersionNumber')
           echo "TEMPLATE_VERSION=$TEMPLATE_VERSION" >> $GITHUB_ENV
 
       # Update the autoscaling group to use the new Launch Template.
