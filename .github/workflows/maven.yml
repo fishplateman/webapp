@@ -25,6 +25,22 @@ jobs:
       - name: Validate AMI Script
         run: packer validate AMI.json
 
+      # Configure AWS
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.PROD_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.PROD_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      # Get Latest AMI ID
+      - name: Get AMI ID
+        run: |
+          latest_ami_id=$(aws ec2 describe-images --owners 807109680293 --query 'Images[].[ImageId, CreationDate]' --output text | sort -k2 -r | head -n1 | awk '{print $1}')
+          echo "Latest AMI ID: $latest_ami_id"
+          echo "LATEST_AMI_ID=$latest_ami_id" >> $GITHUB_ENV
+
+      # Create or update a Launch Template for the autoscaling group.
       - name: Create or Update Launch Template
         run: |
           TEMPLATE_NAME="example_launch_template"
