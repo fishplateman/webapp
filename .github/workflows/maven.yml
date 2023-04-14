@@ -48,14 +48,18 @@ jobs:
           TEMPLATE_VERSION=$(aws ec2 create-launch-template --launch-template-name $TEMPLATE_NAME --launch-template-data "{\"ImageId\":\"$LATEST_AMI_ID\",\"InstanceType\":\"t2.micro\"}" | jq '.LaunchTemplate.LatestVersionNumber')
           echo "TEMPLATE_VERSION=$TEMPLATE_VERSION" >> $GITHUB_ENV
 
+      # Get the Auto Scaling Group Name
+      - name: Get Auto Scaling Group Name
+        run: |
+          ASG_NAME=$(aws autoscaling describe-auto-scaling-groups --query "AutoScalingGroups[0].AutoScalingGroupName" --output text)
+          echo "ASG_NAME=$ASG_NAME" >> $GITHUB_ENV
+
       # Update the autoscaling group to use the new Launch Template.
       - name: Update Auto Scaling Group
         run: |
-          ASG_NAME="my-new-autoscaling-group"
           aws autoscaling update-auto-scaling-group --auto-scaling-group-name $ASG_NAME --launch-template "{\"LaunchTemplateName\":\"my-new-launch-template\",\"Version\":\"$TEMPLATE_VERSION\"}"
 
       # Issue command to the auto-scale group to do an instance refresh.
-      - name: Create Launch Template
+      - name: Refresh Instances
         run: |
-          ASG_NAME="my-autoscaling-group"
           aws autoscaling start-instance-refresh --auto-scaling-group-name $ASG_NAME
