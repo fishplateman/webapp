@@ -26,6 +26,17 @@ import java.security.Principal;
 public class UserController {
     private static final Logger logger = LogManager.getLogger(UserController.class);
     //test url
+    @RequestMapping("/health")
+    public ExceptionMessage responseHealthWithoutZ(){
+        long startTime = System.currentTimeMillis();
+        long responseTime = System.currentTimeMillis() - startTime;
+        statsDClient.incrementCounter("health.count");
+        statsDClient.recordExecutionTime("health.time", responseTime);
+        cloudWatchService.sendCustomMetric("Health", 1, responseTime);
+        logger.info("Health");
+        return new ExceptionMessage().success();
+    }
+
     @RequestMapping("/healthz")
     public ExceptionMessage responseHealth(){
         long startTime = System.currentTimeMillis();

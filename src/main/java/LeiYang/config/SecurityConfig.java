@@ -43,6 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.authorizeRequests()
                 .antMatchers("/healthz").anonymous()
+                .antMatchers("/health").anonymous()
                 .antMatchers(
                         HttpMethod.POST,
                         "/v1/user"
