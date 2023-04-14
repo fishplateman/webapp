@@ -33,7 +33,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.PROD_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-
       # Get Latest AMI ID
       - name: Get AMI ID
         run: |
@@ -41,20 +40,24 @@ jobs:
           echo "Latest AMI ID: $latest_ami_id"
           echo "LATEST_AMI_ID=$latest_ami_id" >> $GITHUB_ENV
 
-      # Create a new Launch Template for the autoscaling group.
-#      - name: Create Launch Template
-#        run: |
-#          TEMPLATE_NAME="my-new-launch-template"
-#          TEMPLATE_VERSION=$(aws ec2 create-launch-template --launch-template-name $TEMPLATE_NAME --launch-template-data "{\"ImageId\":\"$LATEST_AMI_ID\",\"InstanceType\":\"t2.micro\"}" | jq '.LaunchTemplate.LatestVersionNumber')
-#          echo "TEMPLATE_VERSION=$TEMPLATE_VERSION" >> $GITHUB_ENV
-      # Create a new Launch Template for the autoscaling group.
-      - name: Create Launch Template
+      # Create or update a Launch Template for the autoscaling group.
+      - name: Create or Update Launch Template
         run: |
-          TEMPLATE_NAME="my-new-launch-template"
-          RESPONSE=$(aws ec2 create-launch-template --launch-template-name $TEMPLATE_NAME --launch-template-data "{\"ImageId\":\"$LATEST_AMI_ID\",\"InstanceType\":\"t2.micro\"}")
-          echo "Launch template creation response: $RESPONSE"
-          TEMPLATE_VERSION=$(echo $RESPONSE | jq '.LaunchTemplate.LatestVersionNumber')
+          TEMPLATE_NAME="example-launch-template"
+          TEMPLATE_EXISTS=$(aws ec2 describe-launch-templates --filters "Name=launch-template-name,Values=$TEMPLATE_NAME" --query 'LaunchTemplates[0].LaunchTemplateName' --output text)
+
+          if [ "$TEMPLATE_EXISTS" == "$TEMPLATE_NAME" ]; then
+            echo "Updating existing launch template..."
+            RESPONSE=$(aws ec2 create-launch-template-version --launch-template-name $TEMPLATE_NAME --launch-template-data "{\"ImageId\":\"$LATEST_AMI_ID\",\"InstanceType\":\"t2.micro\"}")
+          else
+            echo "Creating new launch template..."
+            RESPONSE=$(aws ec2 create-launch-template --launch-template-name $TEMPLATE_NAME --launch-template-data "{\"ImageId\":\"$LATEST_AMI_ID\",\"InstanceType\":\"t2.micro\"}")
+          fi
+
+          echo "Launch template response: $RESPONSE"
+          TEMPLATE_VERSION=$(echo $RESPONSE | jq '.LaunchTemplate.LatestVersionNumber // .LaunchTemplateVersion.VersionNumber')
           echo "TEMPLATE_VERSION=$TEMPLATE_VERSION" >> $GITHUB_ENV
+
 
       # Get the Auto Scaling Group Name
       - name: Get Auto Scaling Group Name
@@ -65,7 +68,7 @@ jobs:
       # Update the autoscaling group to use the new Launch Template.
       - name: Update Auto Scaling Group
         run: |
-          aws autoscaling update-auto-scaling-group --auto-scaling-group-name $ASG_NAME --launch-template "{\"LaunchTemplateName\":\"my-new-launch-template\",\"Version\":\"$TEMPLATE_VERSION\"}"
+          aws autoscaling update-auto-scaling-group --auto-scaling-group-name $ASG_NAME --launch-template "{\"LaunchTemplateName\":\"example-launch-template\",\"Version\":\"$TEMPLATE_VERSION\"}"
 
       # Issue command to the auto-scale group to do an instance refresh.
       - name: Refresh Instances
