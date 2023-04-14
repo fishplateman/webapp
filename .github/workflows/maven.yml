@@ -24,3 +24,37 @@ jobs:
 
       - name: Validate AMI Script
         run: packer validate AMI.json
+
+      # Configure AWS
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.PROD_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.PROD_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+
+      # Get Latest AMI ID
+      - name: Get AMI ID
+        run: |
+          latest_ami_id=$(aws ec2 describe-images --owners 807109680293 --query 'Images[].[ImageId, CreationDate]' --output text | sort -k2 -r | head -n1 | awk '{print $1}')
+          echo "Latest AMI ID: $latest_ami_id"
+
+      # Create a new Launch Template for the autoscaling group.
+      - name: Create Launch Template
+        run: |
+          TEMPLATE_NAME="my-new-launch-template"
+          TEMPLATE_VERSION=$(aws ec2 create-launch-template --launch-template-name $TEMPLATE_NAME --launch-template-data "{\"ImageId\":\"$latest_ami_id\",\"InstanceType\":\"t2.micro\"}" | jq '.LaunchTemplate.LatestVersionNumber')
+          echo "TEMPLATE_VERSION=$TEMPLATE_VERSION" >> $GITHUB_ENV
+
+      # Update the autoscaling group to use the new Launch Template.
+      - name: Update Auto Scaling Group
+        run: |
+          ASG_NAME="my-new-autoscaling-group"
+          aws autoscaling update-auto-scaling-group --auto-scaling-group-name $ASG_NAME --launch-template "{\"LaunchTemplateName\":\"my-new-launch-template\",\"Version\":\"$TEMPLATE_VERSION\"}"
+
+      # Issue command to the auto-scale group to do an instance refresh.
+      - name: Create Launch Template
+        run: |
+          ASG_NAME="my-autoscaling-group"
+          aws autoscaling start-instance-refresh --auto-scaling-group-name $ASG_NAME
