@@ -72,11 +72,13 @@ jobs:
           if [ "$TEMPLATE_EXISTS" == "$TEMPLATE_NAME" ]; then
             echo "Updating existing launch template..."
             CURRENT_TEMPLATE_DATA=$(aws ec2 describe-launch-template-versions --launch-template-name $TEMPLATE_NAME --query 'LaunchTemplateVersions[0].LaunchTemplateData' --output json)
-            UPDATED_TEMPLATE_DATA=$(echo $CURRENT_TEMPLATE_DATA | jq ".ImageId=\"$LATEST_AMI_ID\"")
+            CURRENT_SECURITY_GROUPS=$(echo $CURRENT_TEMPLATE_DATA | jq ".SecurityGroupIds")
+            CURRENT_KEY_PAIR=$(echo $CURRENT_TEMPLATE_DATA | jq ".KeyName")
+            UPDATED_TEMPLATE_DATA=$(echo $CURRENT_TEMPLATE_DATA | jq ".ImageId=\"$LATEST_AMI_ID\" | .SecurityGroupIds=$CURRENT_SECURITY_GROUPS | .KeyName=$CURRENT_KEY_PAIR")
             RESPONSE=$(aws ec2 create-launch-template-version --launch-template-name $TEMPLATE_NAME --launch-template-data "$UPDATED_TEMPLATE_DATA")
           else
             echo "Creating new launch template..."
-            RESPONSE=$(aws ec2 create-launch-template --launch-template-name $TEMPLATE_NAME --launch-template-data "{\"ImageId\":\"$LATEST_AMI_ID\",\"InstanceType\":\"t2.micro\"}")
+            RESPONSE=$(aws ec2 create-launch-template --launch-template-name $TEMPLATE_NAME --launch-template-data "{\"ImageId\":\"$LATEST_AMI_ID\",\"InstanceType\":\"t2.micro\"}") # Add SecurityGroupIds and KeyName here for new templates, if needed.
           fi
 
           echo "Launch template response: $RESPONSE"
