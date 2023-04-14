@@ -45,36 +45,19 @@ jobs:
           echo "Latest AMI ID: $latest_ami_id"
           echo "LATEST_AMI_ID=$latest_ami_id" >> $GITHUB_ENV
 
-#      # Create or update a Launch Template for the autoscaling group.
-#      - name: Create or Update Launch Template
-#        run: |
-#          TEMPLATE_NAME="example_launch_template"
-#          TEMPLATE_EXISTS=$(aws ec2 describe-launch-templates --filters "Name=launch-template-name,Values=$TEMPLATE_NAME" --query 'LaunchTemplates[0].LaunchTemplateName' --output text)
-#
-#          if [ "$TEMPLATE_EXISTS" == "$TEMPLATE_NAME" ]; then
-#            echo "Updating existing launch template..."
-#            RESPONSE=$(aws ec2 create-launch-template-version --launch-template-name $TEMPLATE_NAME --launch-template-data "{\"ImageId\":\"$LATEST_AMI_ID\",\"InstanceType\":\"t2.micro\"}")
-#          else
-#            echo "Creating new launch template..."
-#            RESPONSE=$(aws ec2 create-launch-template --launch-template-name $TEMPLATE_NAME --launch-template-data "{\"ImageId\":\"$LATEST_AMI_ID\",\"InstanceType\":\"t2.micro\"}")
-#          fi
-#
-#          echo "Launch template response: $RESPONSE"
-#          TEMPLATE_VERSION=$(echo $RESPONSE | jq '.LaunchTemplate.LatestVersionNumber // .LaunchTemplateVersion.VersionNumber')
-#          echo "TEMPLATE_VERSION=$TEMPLATE_VERSION" >> $GITHUB_ENV
-
-    # Create or update a Launch Template for the autoscaling group.
+      # Create or update a Launch Template for the autoscaling group.
       - name: Create or Update Launch Template
         run: |
           TEMPLATE_NAME="example_launch_template"
-          TEMPLATE_EXISTS=$(aws ec2 describe-launch-templates --filters "Name=launch-template-name,Values=$TEMPLATE_NAME" --query 'LaunchTemplates[0].LaunchTemplateName' --output text)
+          TEMPLATE_EXISTS=$(aws ec2 describe-launch-template-versions --launch-template-name "$TEMPLATE_NAME" --versions "1" --query 'LaunchTemplateVersions[0].LaunchTemplateName' --output text)
+
 
           if [ "$TEMPLATE_EXISTS" == "$TEMPLATE_NAME" ]; then
             echo "Updating existing launch template..."
-            CURRENT_TEMPLATE_DATA=$(aws ec2 describe-launch-template-versions --launch-template-name $TEMPLATE_NAME --query 'LaunchTemplateVersions[0].LaunchTemplateData' --output json)
-            CURRENT_SECURITY_GROUPS=$(echo $CURRENT_TEMPLATE_DATA | jq ".SecurityGroupIds")
-            CURRENT_KEY_PAIR=$(echo $CURRENT_TEMPLATE_DATA | jq ".KeyName")
-            UPDATED_TEMPLATE_DATA=$(echo $CURRENT_TEMPLATE_DATA | jq ".ImageId=\"$LATEST_AMI_ID\" | .SecurityGroupIds=$CURRENT_SECURITY_GROUPS | .KeyName=$CURRENT_KEY_PAIR")
+            CURRENT_TEMPLATE_DATA=$(aws ec2 describe-launch-template-versions --launch-template-name "$TEMPLATE_NAME" --versions "1" --query 'LaunchTemplateVersions[0].LaunchTemplateData' --output json)
+            CURRENT_SECURITY_GROUPS=$(echo $CURRENT_TEMPLATE_DATA | jq ".NetworkInterfaces[0].Groups")
+            CURRENT_KEY_PAIR=$(echo $CURRENT_TEMPLATE_DATA | jq -r ".KeyName")
+            UPDATED_TEMPLATE_DATA=$(echo $CURRENT_TEMPLATE_DATA | jq ".ImageId=\"$LATEST_AMI_ID\" | .NetworkInterfaces[0].Groups=$CURRENT_SECURITY_GROUPS | .KeyName=\"$CURRENT_KEY_PAIR\"")
             RESPONSE=$(aws ec2 create-launch-template-version --launch-template-name $TEMPLATE_NAME --launch-template-data "$UPDATED_TEMPLATE_DATA")
           else
             echo "Creating new launch template..."
