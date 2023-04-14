@@ -48,7 +48,7 @@ jobs:
       # Create or update a Launch Template for the autoscaling group.
       - name: Create or Update Launch Template
         run: |
-          TEMPLATE_NAME="example-launch-template"
+          TEMPLATE_NAME="example_launch_template"
           TEMPLATE_EXISTS=$(aws ec2 describe-launch-templates --filters "Name=launch-template-name,Values=$TEMPLATE_NAME" --query 'LaunchTemplates[0].LaunchTemplateName' --output text)
 
           if [ "$TEMPLATE_EXISTS" == "$TEMPLATE_NAME" ]; then
@@ -73,5 +73,5 @@ jobs:
       # Update the autoscaling group to use the new Launch Template.
       - name: Update Auto Scaling Group
         run: |
-          aws autoscaling update-auto-scaling-group --auto-scaling-group-name $ASG_NAME --launch-template "{\"LaunchTemplateName\":\"example-launch-template\",\"Version\":\"$TEMPLATE_VERSION\"}"
+          aws autoscaling update-auto-scaling-group --auto-scaling-group-name $ASG_NAME --launch-template "{\"LaunchTemplateName\":\"example_launch_template\",\"Version\":\"$TEMPLATE_VERSION\"}"
 
