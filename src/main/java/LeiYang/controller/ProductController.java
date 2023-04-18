@@ -152,7 +152,7 @@ public class ProductController {
         return result;
     }
 
-    @GetMapping("/v1/product/{productId}")
+    @GetMapping("/v2/product/{productId}")
     public Product getProduct(@PathVariable Long productId){
         long startTime = System.currentTimeMillis();
         Product product = productService.findById(productId);
