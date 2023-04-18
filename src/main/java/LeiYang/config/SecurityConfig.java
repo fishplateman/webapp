@@ -51,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 ).anonymous()
                 .antMatchers(
                         HttpMethod.GET,
-                        "/v1/product/{productId}"
+                        "/v2/product/{productId}"
 
                 ).permitAll()
                 .anyRequest().authenticated()
