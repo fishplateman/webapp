@@ -7,7 +7,7 @@ CSYE 6225 Spring 2023
 
 Tips:
 This project is for CLOUD ONLY! You can't run it locally.
-I do this for my grade and my aws infra script in another repository!
+I did this for my grade and my aws infra script in another repository!
 Thank you!
 Peace.
 Thank you Tejas! You teach me what devops is!
